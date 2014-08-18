@@ -1,4 +1,4 @@
-package com.nepse;
+package com.nepse.starter;
 
 import java.util.Date;
 import java.util.List;
