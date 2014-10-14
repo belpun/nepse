@@ -17,9 +17,11 @@ import org.jsoup.select.Elements;
 
 import com.nepse.exception.DataNotAvailable;
 
-public class NepseDataExtractor {
+public class NepseDataExtractorFromWeb {
+	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	public List<CompanyData> extractLiveData() {
+		
 		List<CompanyData> companies = new ArrayList<CompanyData>();
 
 		Document doc = null;
@@ -100,15 +102,13 @@ public class NepseDataExtractor {
 					high, low, closingPrice, volume, amount, previousClosingPrice,
 					difference, true));
 		}
-
-
 		
 		return companies;
 	}
 	
 	public Map<Date, List<CompanyData>> extractArchivedData(String fromDate, String toDate) {
 		Map<Date, List<CompanyData>> dateRangeData = new LinkedHashMap<Date, List<CompanyData>>();
-		DateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+		
 		Date from = null;
 		Date to = null;
 		try {

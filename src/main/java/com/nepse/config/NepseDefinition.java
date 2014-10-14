@@ -1,31 +1,31 @@
 package com.nepse.config;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.nepse.loader.NepseDataLoader;
+import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.loader.NepseDataLoaderFromFile;
 
 public class NepseDefinition {
+	
+	private final NepseDataExtractorFromWeb nepseDataExtractor;
+	
 	private static NepseDefinition nepseDefinition;
 	
-	private static NepseDataLoader dataLoader;
+	private static NepseDataLoaderFromFile dataLoader;
 	
-	private static final String COMPANY_SYMBOL_FILE = "companySymbol.csv";
+	private static final String COMPANY_SYMBOL_FILE = "src\\main\\resources\\companySymbol.csv";
 	
-	private Map<String, String> compnaySymbol;
+	private final Map<String, String> companySymbol;
 	
-	public Map<String, String> getCompnaySymbol() {
-		return Collections.unmodifiableMap(compnaySymbol);
-	}
-
-
 //	private Map<String, Object> cache;
 	
 	private NepseDefinition(){
-		dataLoader = new NepseDataLoader();
+		dataLoader = new NepseDataLoaderFromFile();
 		
-		dataLoader.getCompanySymbol(COMPANY_SYMBOL_FILE);
+		companySymbol = dataLoader.getCompanySymbol(COMPANY_SYMBOL_FILE);
+		
+		nepseDataExtractor = new NepseDataExtractorFromWeb();
 	}
 	
 	
@@ -39,6 +39,16 @@ public class NepseDefinition {
 		
 		return nepseDefinition;
 		
+		
+	}
+	
+	public Map<String, String> getCompanySymbol() {
+		return Collections.unmodifiableMap(companySymbol);
+	}
+	
+	public void loadAllData(String date) {
+		
+	
 		
 	}
 	

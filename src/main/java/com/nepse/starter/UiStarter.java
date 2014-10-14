@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.nepse.data.CompanyData;
-import com.nepse.data.NepseDataExtractor;
+import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.exception.DataNotAvailable;
 import com.nepse.exception.FileCreationException;
 import com.nepse.writer.CsvWriter;
@@ -27,13 +27,13 @@ public class UiStarter extends JFrame {
 
 	private static final long serialVersionUID = 7770714940876701913L;
 
-	private NepseDataExtractor nepseDataExtractor;
+	private NepseDataExtractorFromWeb nepseDataExtractor;
 	private CsvWriter writer;
 
 	public UiStarter() {
 
 		initUI();
-		nepseDataExtractor = new NepseDataExtractor();
+		nepseDataExtractor = new NepseDataExtractorFromWeb();
 		writer = new CsvWriter();
 	}
 

@@ -107,7 +107,7 @@ public class CsvWriter {
 
 	}
 	
-	public void writeDataPerCompanyToCsvFile(Map<Date, List<CompanyData>> companies, String location, String fileName, String name) {
+	public void writeDataPerCompanyToCsvFile(Map<Date, List<CompanyData>> companiesDatas, String location, String fileName, String name, boolean dateInMilliSecond) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		File outputFile;
 		OutputStream outputStream = null;
@@ -119,18 +119,20 @@ public class CsvWriter {
 			String headerLine = NEPSE_COMPANY_HEADERS + "\n";
 			outputStream.write(headerLine.getBytes());
 
-			for(Date key : companies.keySet()){
+			for(Date key : companiesDatas.keySet()){
 				
-				List<CompanyData> companyList = companies.get(key);
+				List<CompanyData> companyList = companiesDatas.get(key);
 			if(companyList != null) {
 			for (CompanyData company : companyList) {
 				
 				if (company.getName().equals(name)) {
 					
 					StringBuilder data = new StringBuilder();
-					
-					data.append(df.format(key)).append(DELIMITER);
-					
+					if (dateInMilliSecond) {
+						data.append(key.getTime()).append(DELIMITER);
+					} else {
+						data.append(df.format(key)).append(DELIMITER);
+					}
 					
 					data.append(company.getSymbolNumber()).append(DELIMITER);
 					data.append(company.getName()).append(DELIMITER);
