@@ -20,8 +20,14 @@ public class Main {
 //		writer.writeArchivedDataToCsvFile(companies, "nepseLiveTest");
 		
 		
-		NepseArchiveDataInitializer init = new NepseArchiveDataInitializer();
-		init.initializeFileForAll();
+		NepseDataExtractorFromWeb extractor =new NepseDataExtractorFromWeb();
+		Map<Date, CompanyData> extractArchivedDataForCompany = extractor.extractArchivedDataForCompany("MEGA", "2012-09-14", "2014-10-14");
+		
+		writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany, "src\\main\\resources", "MEGA", false);
+		
+		System.out.println("stop");
+//		NepseArchiveDataInitializer init = new NepseArchiveDataInitializer();
+//		init.initializeFileForAll();
 		
 //		Map<String, String> companySymbol = NepseDefinition.getInstance().getCompanySymbol();
 //		

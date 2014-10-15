@@ -16,7 +16,7 @@ import com.nepse.exception.FileCreationException;
 public class CsvWriter {
 	private final static String NEPSE_LIVE_HEADERS = "S.No,Company Name,Symbol,LTP,LTV,% Change,Open, Low, High,Volume";
 	private final static String NEPSE_ARCHIVED_HEADERS = "S.No,Traded Companies,No.of Transaction,Max.price,Min.price,Closing Price,Total Share,Amount,Prevous Closing, Difference Rs.";
-	private final static String NEPSE_COMPANY_HEADERS = "Date,S.No,Traded Companies,No.of Transaction,Max.price,Min.price,Closing Price,Total Share,Amount,Prevous Closing, Difference Rs.";
+	private final static String NEPSE_COMPANY_HEADERS = "Date,No.of Transaction,Total Share,Amount,Max.price,Min.price,Closing Price";
 	private final static String DELIMITER = ",";
 
 	public void writeLiveDataToCsvFile(List<CompanyData> companies, String location, String fileName) {
@@ -107,12 +107,14 @@ public class CsvWriter {
 
 	}
 	
-	public void writeDataPerCompanyToCsvFile(Map<Date, List<CompanyData>> companiesDatas, String location, String fileName, String name, boolean dateInMilliSecond) {
+	public void writeDataPerCompanyToCsvFile(Map<Date, CompanyData> companiesDatas, String location, String companySymbol, boolean dateInMilliSecond) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		File outputFile;
+		
+		String fileName = location + "\\"+companySymbol + ".csv";
 		OutputStream outputStream = null;
 		try {
-			outputFile = createNewOutputFile(location, fileName);
+			outputFile = new File(fileName);
 
 			outputStream = new FileOutputStream(outputFile);
 
@@ -121,11 +123,7 @@ public class CsvWriter {
 
 			for(Date key : companiesDatas.keySet()){
 				
-				List<CompanyData> companyList = companiesDatas.get(key);
-			if(companyList != null) {
-			for (CompanyData company : companyList) {
-				
-				if (company.getName().equals(name)) {
+				CompanyData company = companiesDatas.get(key);
 					
 					StringBuilder data = new StringBuilder();
 					if (dateInMilliSecond) {
@@ -134,22 +132,17 @@ public class CsvWriter {
 						data.append(df.format(key)).append(DELIMITER);
 					}
 					
-					data.append(company.getSymbolNumber()).append(DELIMITER);
-					data.append(company.getName()).append(DELIMITER);
+//					data.append(company.getSymbolNumber()).append(DELIMITER);
+//					data.append(company.getName()).append(DELIMITER);
 					data.append(company.getNoOfTransaction()).append(DELIMITER);
+					data.append(company.getTotalSharesTraded()).append(DELIMITER);
+					data.append(company.getVolume()).append(DELIMITER);
 					data.append(company.getHigh()).append(DELIMITER);
 					data.append(company.getLow()).append(DELIMITER);
-					data.append(company.getClosingPrice()).append(DELIMITER);
-					data.append(company.getVolume()).append(DELIMITER);
-					data.append(company.getAmount()).append(DELIMITER);
-					data.append(company.getPreviousClosingPrice()).append(DELIMITER);
-					data.append(company.getDifference()).append("\n");
-	
+					data.append(company.getClosingPrice()).append("\n");
+//					data.append(company.getPreviousClosingPrice()).append(DELIMITER);
+//					data.append(company.getDifference()).append("\n");
 					outputStream.write(data.toString().getBytes());
-				}
-			}
-			}
-			
 		}
 
 		} catch (IOException e) {

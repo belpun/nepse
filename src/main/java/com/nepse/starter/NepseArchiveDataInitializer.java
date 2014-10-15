@@ -10,10 +10,13 @@ import java.util.Map;
 import com.nepse.config.NepseDefinition;
 import com.nepse.data.CompanyData;
 import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.writer.CsvWriter;
 
 public class NepseArchiveDataInitializer {
 	
 	NepseDataExtractorFromWeb extractor = new NepseDataExtractorFromWeb();
+	
+	CsvWriter writer = new CsvWriter();
 	
 	public void initializeFileForAll() {
 		Map<String, String> companySymbol = NepseDefinition.getInstance().getCompanySymbol();
@@ -38,21 +41,23 @@ public class NepseArchiveDataInitializer {
 		
 		Map<Date, List<CompanyData>> extractArchivedData = extractor.extractArchivedData("2014-09-13", "2014-10-13");
 		
-		for(Date date : extractArchivedData.keySet()) {
-			
-			List<CompanyData> listOfDay = extractArchivedData.get(date);
-			
-			for(CompanyData company : listOfDay) {
-				String symbol = findSymbolFromCompanyName(company.getName());
-				
-				if(symbol != null ) {
-					Map<Date, CompanyData> archivedCompanyData = companyData.get(symbol);
-					archivedCompanyData.put(date, company);
-				}
-				
-			}
-			
-		}
+//		writer.writeDataPerCompanyToCsvFile(companiesDatas, location, fileName, name, dateInMilliSecond);
+		
+//		for(Date date : extractArchivedData.keySet()) {
+//			
+//			List<CompanyData> listOfDay = extractArchivedData.get(date);
+//			
+//			for(CompanyData company : listOfDay) {
+//				String symbol = findSymbolFromCompanyName(company.getName());
+//				
+//				if(symbol != null ) {
+//					Map<Date, CompanyData> archivedCompanyData = companyData.get(symbol);
+//					archivedCompanyData.put(date, company);
+//				}
+//				
+//			}
+//			
+//		}
 		System.out.println("stop");
 	}
 	

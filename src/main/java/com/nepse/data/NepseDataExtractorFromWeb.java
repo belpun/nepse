@@ -18,7 +18,7 @@ import org.jsoup.select.Elements;
 import com.nepse.exception.DataNotAvailable;
 
 public class NepseDataExtractorFromWeb {
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	public List<CompanyData> extractLiveData() {
 		
@@ -106,14 +106,57 @@ public class NepseDataExtractorFromWeb {
 		return companies;
 	}
 	
+	public  Map<Date, CompanyData> extractArchivedDataForCompany(String symbol, String startdate, String  endDate) {
+		Map<Date, CompanyData> allData = new LinkedHashMap<Date, CompanyData>();
+		Document doc = null;
+			try {
+			
+			//date sample Date=2014-08-22
+			doc = Jsoup.connect("http://www.nepalstock.com.np/stockWisePrices")
+					.data("startDate", startdate)
+					.data("endDate", endDate)
+					.data("stock-symbol", symbol)
+					.data("_limit", "500")
+					.post();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+		Elements dataTable = doc.getElementsByTag("table").get(0).select("tbody").select("tr");
+		System.out.println(dataTable);
+		for (int i = 2; i < dataTable.size() -1; i++) {
+			Elements stockCompany = dataTable.get(i).select("td");
+//			int symbolNumber = Integer.valueOf(stockCompany.get(0).text());
+			Date date = null;
+			try {
+				date = dateFormatter.parse(stockCompany.get(1).text());
+			} catch (ParseException e) {
+				System.out.println("Cannot parse the data from the web so skipping it");
+				continue;
+			}
+			String totalTransaction = stockCompany.get(2).text();
+			String totalSharesTraded = stockCompany.get(3).text();
+			String volume = stockCompany.get(4).text();
+			String maxPrice = stockCompany.get(5).text();
+			String minPrice = stockCompany.get(6).text();
+			String closingPrice = stockCompany.get(7).text();
+			
+			CompanyData companyData = new CompanyData(totalTransaction, totalSharesTraded, volume, maxPrice, minPrice, closingPrice);
+			
+			allData.put(date, companyData);
+		}
+		return allData;
+	}
+	
+	
 	public Map<Date, List<CompanyData>> extractArchivedData(String fromDate, String toDate) {
 		Map<Date, List<CompanyData>> dateRangeData = new LinkedHashMap<Date, List<CompanyData>>();
 		
 		Date from = null;
 		Date to = null;
 		try {
-			from = dateFormat.parse(fromDate);
-			to = dateFormat.parse(toDate);
+			from = dateFormatter.parse(fromDate);
+			to = dateFormatter.parse(toDate);
 		} catch (ParseException e) {
 			throw new DataNotAvailable("Date should be in yyy-MM-dd format");
 		}
@@ -125,7 +168,7 @@ public class NepseDataExtractorFromWeb {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(from);
 		while (from.before(to) || from.equals(to)){
-			String requiredDate = dateFormat.format(from);
+			String requiredDate = dateFormatter.format(from);
 			
 			List<CompanyData> extractArchivedData = null;
 			try{

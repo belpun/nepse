@@ -14,11 +14,26 @@ public class CompanyData {
 	//this is the total shares as ell
 	private String volume;
 	
+	private String totalSharesTraded;
+	
 	private String noOfTransaction;
 	private String closingPrice;
 	private String amount;
 	private String previousClosingPrice;
 	private String difference;
+	
+	//for file
+	public CompanyData(String noOfTransaction, String totalSharesTraded, String volume,
+			String high, String low,
+			String closingPrice) {
+		this.noOfTransaction = noOfTransaction;
+		this.totalSharesTraded = totalSharesTraded;
+		this.volume = volume;
+		this.high = high;
+		this.low = low;
+		this.closingPrice = closingPrice;
+	}
+	
 	
 	//this is for archived data
 	public CompanyData(int symbolNumber, String name, String noOfTransaction,
@@ -151,6 +166,16 @@ public class CompanyData {
 
 	public void setDifference(String difference) {
 		this.difference = difference;
+	}
+
+
+	public String getTotalSharesTraded() {
+		return totalSharesTraded;
+	}
+
+
+	public void setTotalSharesTraded(String totalSharesTraded) {
+		this.totalSharesTraded = totalSharesTraded;
 	}
 
 }
