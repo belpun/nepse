@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,18 +24,19 @@ public class CsvCompanyDataProvider implements ICompanyDataProvider {
 		
 		Map<Date, CompanyData> datas = new HashMap<Date, CompanyData>();
 		
-		File file = new File(fileName);
+		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(fileName + ".csv");
 		
-		if(!file.exists()) {
+		if(resourceAsStream ==null) {
 			throw new FileNotFoundException();
 		}
+//		File file = new File("src\\main\\resources\\" + fileName + ".csv");
 		
-		FileReader fr = null;
 		BufferedReader br = null;
+		
+		InputStreamReader inputStreamReader = null;
 		try {
-			fr = new FileReader(fileName);
-
-			br = new BufferedReader(fr);
+			inputStreamReader = new InputStreamReader(resourceAsStream);
+			br = new BufferedReader(inputStreamReader);
 
 			SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
 			String header = br.readLine();

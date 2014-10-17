@@ -28,9 +28,9 @@ public class NepsePriceController {
 		System.out.println("created the controller");
 	}
 	
-	@RequestMapping(value = "/service/test/{symbol}", method = RequestMethod.GET)
+	@RequestMapping(value = "/service/historicData/{symbol}", method = RequestMethod.GET)
 	public @ResponseBody List<String> getJsonCompanyData(@PathVariable String symbol, HttpServletRequest request) {
-		
+		System.out.println("got the request");
 		Map<Date, CompanyData> companyData =null ; 
 		try {
 			companyData = DataProvider.getCompanyData(symbol);
