@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.nepse.data.CompanyData;
@@ -22,7 +23,7 @@ public class CsvCompanyDataProvider implements ICompanyDataProvider {
 	@Override
 	public Map<Date, CompanyData> getCompanyData(String fileName) throws FileNotFoundException {
 		
-		Map<Date, CompanyData> datas = new HashMap<Date, CompanyData>();
+		Map<Date, CompanyData> datas = new LinkedHashMap<Date, CompanyData>();
 		
 		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(fileName + ".csv");
 		

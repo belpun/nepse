@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-
-<script language="javascript"> 
 $(function () {
 alert("test");
-    $.getJSON('http://localhost:8080/nepseData/nepseData/service/historicData/MEGA', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
 
         // create the chart
         $('#container').highcharts('StockChart', {
@@ -41,16 +34,4 @@ alert("test");
     });
 });
 
-</script>
 
-</head>
-
-<body>
-
-<script src="http://code.highcharts.com/stock/highstock.js"></script>
-<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
-<div id="container" style="height: 400px; min-width: 310px"></div>
-
-</body>
-
-</html>
