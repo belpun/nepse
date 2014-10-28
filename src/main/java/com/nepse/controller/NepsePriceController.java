@@ -2,10 +2,12 @@ package com.nepse.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -76,10 +78,12 @@ public class NepsePriceController {
 
 	public List<String> convertToJsonFormat(Map<Date, CompanyData> companyDatas) {
 		List<String> datas = new LinkedList<String>();
-		for (Date key : companyDatas.keySet()) {
-			CompanyData companyData = companyDatas.get(key);
+		
+		Map<Date, CompanyData> sortedCompanyDatas = new TreeMap<Date, CompanyData>(companyDatas);
+		for (Date key : sortedCompanyDatas.keySet()) {
+			CompanyData companyData = sortedCompanyDatas.get(key);
 			StringBuilder value = new StringBuilder("" + key.getTime());
-			System.out.println(key);
+			System.out.println(key.getTime()+ " " +key);
 			
 			Float closingPrice = Float.valueOf(companyData.getClosingPrice());
 			
