@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +34,7 @@ public class NepsePriceController {
 		System.out.println("created the controller");
 	}
 
-	@RequestMapping(value = "/service/historicData/{symbol}", method = RequestMethod.GET,
-			headers="Accept=text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01")
+	@RequestMapping(value = "/service/historicData/{symbol}", method = RequestMethod.GET)
 	public @ResponseBody String getJsonCompanyData(@PathVariable String symbol, HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException {
 		System.out.println("got the request");
 		Map<Date, CompanyData> companyData =null ;
@@ -82,8 +82,11 @@ public class NepsePriceController {
 		Map<Date, CompanyData> sortedCompanyDatas = new TreeMap<Date, CompanyData>(companyDatas);
 		for (Date key : sortedCompanyDatas.keySet()) {
 			CompanyData companyData = sortedCompanyDatas.get(key);
-			StringBuilder value = new StringBuilder("" + key.getTime());
-			System.out.println(key.getTime()+ " " +key);
+			
+			DateTime eventTime = new DateTime(key);
+			eventTime = eventTime.plusHours(12);
+			StringBuilder value = new StringBuilder("" + eventTime.getMillis());
+			System.out.println(eventTime.getMillis()+ " " +eventTime);
 			
 			Float closingPrice = Float.valueOf(companyData.getClosingPrice());
 			
@@ -98,68 +101,68 @@ public class NepsePriceController {
 		return datas;
 	}
 
-	public class JsonData {
-		private long date;
-
-		private String open;
-		private String high;
-		private String low;
-		private String close;
-
-		public JsonData(long date, String open, String high, String low,
-				String close) {
-			this.date = date;
-			this.open = open;
-			this.high = high;
-			this.low = low;
-			this.close = close;
-		}
-
-		public long getDate() {
-			return date;
-		}
-
-		public void setDate(long date) {
-			this.date = date;
-		}
-
-		public String getOpen() {
-			return open;
-		}
-
-		public void setOpen(String open) {
-			this.open = open;
-		}
-
-		public String getHigh() {
-			return high;
-		}
-
-		public void setHigh(String high) {
-			this.high = high;
-		}
-
-		public String getLow() {
-			return low;
-		}
-
-		public void setLow(String low) {
-			this.low = low;
-		}
-
-		public String getClose() {
-			return close;
-		}
-
-		public void setClose(String close) {
-			this.close = close;
-		}
-
-		@Override
-		public String toString() {
-			return open + "," + high + "," + low + "," + close;
-		}
-
-	}
+//	public class JsonData {
+//		private long date;
+//
+//		private String open;
+//		private String high;
+//		private String low;
+//		private String close;
+//
+//		public JsonData(long date, String open, String high, String low,
+//				String close) {
+//			this.date = date;
+//			this.open = open;
+//			this.high = high;
+//			this.low = low;
+//			this.close = close;
+//		}
+//
+//		public long getDate() {
+//			return date;
+//		}
+//
+//		public void setDate(long date) {
+//			this.date = date;
+//		}
+//
+//		public String getOpen() {
+//			return open;
+//		}
+//
+//		public void setOpen(String open) {
+//			this.open = open;
+//		}
+//
+//		public String getHigh() {
+//			return high;
+//		}
+//
+//		public void setHigh(String high) {
+//			this.high = high;
+//		}
+//
+//		public String getLow() {
+//			return low;
+//		}
+//
+//		public void setLow(String low) {
+//			this.low = low;
+//		}
+//
+//		public String getClose() {
+//			return close;
+//		}
+//
+//		public void setClose(String close) {
+//			this.close = close;
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return open + "," + high + "," + low + "," + close;
+//		}
+//
+//	}
 
 }
