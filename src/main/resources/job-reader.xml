@@ -12,7 +12,7 @@
   <batch:job id="CompanyLoadJob">
 	<batch:step id="step1">
 	  <batch:tasklet>
-		<batch:chunk reader="cvsFileItemReader" writer="databaseItemWriter"
+		<batch:chunk reader="cvsFileItemReader" writer="genericEntityWriter"
 			commit-interval="2">
 		</batch:chunk>
 	  </batch:tasklet>
@@ -49,6 +49,8 @@
 	  </property>
  
   </bean>
+  
+  <bean id="genericEntityWriter" class="com.nepse.batch.GenericWriter" />
  
   <bean id="databaseItemWriter"
 	class="org.springframework.batch.item.database.JdbcBatchItemWriter">
