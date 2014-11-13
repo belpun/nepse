@@ -7,7 +7,7 @@
 <script language="javascript"> 
 $(function () {
 alert("test");
-    $.getJSON('http://localhost:8080/nepseData/nepseData/service/historicData/MEGA', function (data) {
+    $.getJSON('http://localhost:9999/nepseData/nepseData/service/historicData/MEGA', function (data) {
 
         // create the chart
         $('#container').highcharts('StockChart', {
