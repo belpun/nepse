@@ -3,6 +3,9 @@ package com.nepse.batch;
 import java.util.List;
 
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.nepse.dao.IGenericRepository;
 
 public class GenericWriter implements ItemWriter<Object> {
 
@@ -12,7 +15,7 @@ public class GenericWriter implements ItemWriter<Object> {
 	@Override
 	public void write(List<? extends Object> entities) throws Exception {
 		for (Object entity : entities) {
-			genericRepository.saveAsAdmin(entity);
+			genericRepository.save(entity);
 		}
 	}
 
