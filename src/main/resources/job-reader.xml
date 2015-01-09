@@ -52,22 +52,22 @@
   
   <bean id="genericEntityWriter" class="com.nepse.batch.GenericWriter" />
  
-  <bean id="databaseItemWriter"
-	class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-	<property name="dataSource" ref="dataSource" />
-	<property name="sql">
-	  <value>
-            <![CDATA[        
-            	insert into Company(name,symbol) 
-			values (:name, :symbol)
-            ]]>
-	  </value>
-	</property>
-	<!-- It will take care matching between object property and sql name parameter -->
-	<property name="itemSqlParameterSourceProvider">
-		<bean
-		class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
-	</property>
-  </bean>
+<!--   <bean id="databaseItemWriter" -->
+<!-- 	class="org.springframework.batch.item.database.JdbcBatchItemWriter"> -->
+<!-- 	<property name="dataSource" ref="dataSource" /> -->
+<!-- 	<property name="sql"> -->
+<!-- 	  <value> -->
+<!--             <![CDATA[         -->
+<!--             	insert into Company(name,symbol)  -->
+<!-- 			values (:name, :symbol) -->
+<!--             ]]> -->
+<!-- 	  </value> -->
+<!-- 	</property> -->
+<!-- 	 It will take care matching between object property and sql name parameter  -->
+<!-- 	<property name="itemSqlParameterSourceProvider"> -->
+<!-- 		<bean -->
+<!-- 		class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" /> -->
+<!-- 	</property> -->
+<!--   </bean> -->
  
 </beans>
