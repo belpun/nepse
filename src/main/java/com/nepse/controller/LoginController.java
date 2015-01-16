@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class LoginController {
 	
-	 @RequestMapping(value = "/", method = RequestMethod.GET)
+	 @RequestMapping(value = "/login", method = RequestMethod.GET)
 	    public String indexPage(@ModelAttribute("model") ModelMap model) {
 	 
 	        return "/index";
 	    }
 	
-	 @RequestMapping(value = "login", method = RequestMethod.GET)
+	 @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	    public String index(@ModelAttribute("model") ModelMap model) {
 	 
 	        return "/dashboard";
