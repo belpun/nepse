@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nepse.data.CompanyData;
+import com.nepse.domain.CompanyData;
 import com.nepse.service.data.CsvCompanyDataProvider;
 import com.nepse.service.data.ICompanyDataProvider;
 

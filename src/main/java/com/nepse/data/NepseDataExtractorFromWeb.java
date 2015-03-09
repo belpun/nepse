@@ -15,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.nepse.domain.CompanyData;
 import com.nepse.exception.DataNotAvailable;
 
 public class NepseDataExtractorFromWeb {

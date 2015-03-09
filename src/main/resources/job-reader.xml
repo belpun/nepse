@@ -10,19 +10,29 @@
   <bean id="company" class="com.nepse.domain.Company" scope="prototype" />
   
   <batch:job id="CompanyLoadJob">
-	<batch:step id="step1">
+	<batch:step id="step1" next="step2">
 	  <batch:tasklet>
-		<batch:chunk reader="cvsFileItemReader" writer="genericEntityWriter"
-			commit-interval="2">
+		<batch:chunk reader="companyReader" writer="genericEntityWriter"
+			commit-interval="10">
 		</batch:chunk>
 	  </batch:tasklet>
 	</batch:step>
+	
+	<batch:step id="step2">
+	  <batch:tasklet>
+		<batch:chunk reader="multiResourceReader" writer="companyDataWriter"
+			commit-interval="10">
+		</batch:chunk>
+	  </batch:tasklet>
+	</batch:step>
+	
   </batch:job>
  
-  <bean id="cvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+  <bean id="companyReader" class="org.springframework.batch.item.file.FlatFileItemReader">
  
 	<!-- Read a csv file -->
 	<property name="resource" value="classpath:companySymbol.csv" />
+	<property name="linesToSkip" value="1" />
  
 	<property name="lineMapper">
 		<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -30,7 +40,7 @@
 		  <property name="lineTokenizer">
 		        <bean
 			  class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
-				<property name="names" value="S.No,name,symbol" />
+				<property name="names" value="name,symbol" />
 			</bean>
 		  </property>
 		  <property name="fieldSetMapper">   
@@ -50,7 +60,35 @@
  
   </bean>
   
+  <bean id="companyDataWriter" class="com.nepse.loader.CompanyDataWriter" />
   <bean id="genericEntityWriter" class="com.nepse.batch.GenericWriter" />
+  
+	<bean id="multiResourceReader"
+		class=" org.springframework.batch.item.file.MultiResourceItemReader">
+		<property name="resources" value="classpath:companyData*.csv" />
+		<property name="delegate" ref="flatFileItemReader" />
+	</bean>
+	
+ 	<bean id="flatFileItemReader" 
+        class="org.springframework.batch.item.file.FlatFileItemReader">
+        <property name="linesToSkip" value="1" />
+	<property name="lineMapper">
+	  <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+		<property name="lineTokenizer">
+		    <bean 
+                    class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+				<property name="names" value="Date,No.of Transaction,Total Share,Amount,Max.price,Min.price,Closing Price" />
+		    </bean>
+		</property>
+		<property name="fieldSetMapper" ref="companyDataMapper"/>
+	  </bean>
+	</property>
+  </bean>
+  
+  <bean id="companyDataMapper" class="com.nepse.loader.CompanyDataMapper">
+		<property name="reader" value="#{multiResourceReader}" />
+<!-- 		<property name="resource" value="#{stepExecutionContext['fileName']}" /> -->
+	</bean>
  
 <!--   <bean id="databaseItemWriter" -->
 <!-- 	class="org.springframework.batch.item.database.JdbcBatchItemWriter"> -->

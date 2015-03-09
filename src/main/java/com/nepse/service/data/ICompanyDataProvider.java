@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.Map;
 
-import com.nepse.data.CompanyData;
+import com.nepse.domain.CompanyData;
 
 public interface ICompanyDataProvider {
 

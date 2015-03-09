@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.nepse.data.CompanyData;
+import com.nepse.domain.CompanyData;
 
 public class CsvCompanyDataProvider implements ICompanyDataProvider {
 	

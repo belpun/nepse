@@ -17,8 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.nepse.data.CompanyData;
 import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.domain.CompanyData;
 import com.nepse.exception.DataNotAvailable;
 import com.nepse.exception.FileCreationException;
 import com.nepse.writer.CsvWriter;

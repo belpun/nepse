@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.nepse.config.NepseDefinition;
-import com.nepse.data.CompanyData;
 import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.domain.CompanyData;
 import com.nepse.writer.CsvWriter;
 
 public class NepseArchiveDataInitializer {

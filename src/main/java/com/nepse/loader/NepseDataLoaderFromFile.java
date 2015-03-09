@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nepse.data.CompanyData;
+import com.nepse.domain.CompanyData;
 
 public class NepseDataLoaderFromFile implements IDataLoader {
 	

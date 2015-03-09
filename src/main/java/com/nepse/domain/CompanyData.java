@@ -1,14 +1,31 @@
-package com.nepse.data;
+package com.nepse.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class CompanyData {
+	
+	@Id
+	@GeneratedValue
+	private long id;
+	
+	@ManyToOne
+	private Company company;
 	private int symbolNumber;
 	private String name;
+	
 	private String symbol;
 	private String lastTradedPrice;
 	private String lastTradedVolume;
 	private String percentageChange;
-	private String open;
 	private String low;
+	
+	@Column(nullable=true)
+	private String openPrice;
 	private String high;
 	
 	//this is the total shares as ell
@@ -21,6 +38,11 @@ public class CompanyData {
 	private String amount;
 	private String previousClosingPrice;
 	private String difference;
+	
+	
+	public CompanyData() {
+		
+	}
 	
 	//for file
 	public CompanyData(String noOfTransaction, String totalSharesTraded, String volume,
@@ -64,7 +86,7 @@ public class CompanyData {
 			this.lastTradedPrice = lastTradedPrice;
 			this.lastTradedVolume = lastTradedVolume;
 			this.percentageChange = percentageChange;
-			this.open = open;
+			this.openPrice = open;
 			this.low = low;
 			this.high = high;
 			this.volume = volume;
@@ -105,11 +127,11 @@ public class CompanyData {
 	public void setPercentageChange(String percentageChange) {
 		this.percentageChange = percentageChange;
 	}
-	public String getOpen() {
-		return open;
+	public String getOpenPrice() {
+		return openPrice;
 	}
-	public void setOpen(String open) {
-		this.open = open;
+	public void setOpenPrice(String open) {
+		this.openPrice = open;
 	}
 	public String getLow() {
 		return low;
@@ -176,6 +198,24 @@ public class CompanyData {
 
 	public void setTotalSharesTraded(String totalSharesTraded) {
 		this.totalSharesTraded = totalSharesTraded;
+	}
+
+	public Company getCompany() {
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+
+
+	public long getId() {
+		return id;
+	}
+
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

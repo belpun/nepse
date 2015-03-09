@@ -9,8 +9,9 @@
   <!-- connect to database -->
   <bean id="dataSource"
 	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	<property name="driverClassName" value="org.sqlite.JDBC" />
-	<property name="url" value="jdbc:jtds:sqlserver://localhost/Test" />
+	<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" />
+<!-- 	<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" /> -->
+	<property name="url" value="jdbc:jtds:sqlserver://localhost/Nepse" />
 <!-- 	<property name="url" value="jdbc:sqlite:nepse.sqlite" /> -->
 	<property name="username" value="sa" />
 	<property name="password" value="BitaPlus1" />
@@ -20,9 +21,9 @@
 	class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
  
 <!-- create job-meta tables automatically -->
-<!--   <jdbc:initialize-database data-source="dataSource"> -->
-<!-- 	<jdbc:script location="org/springframework/batch/core/schema-drop-mysql.sql" /> -->
-<!-- 	<jdbc:script location="org/springframework/batch/core/schema-mysql.sql" /> -->
-<!--   </jdbc:initialize-database> -->
+  <jdbc:initialize-database data-source="dataSource">
+	<jdbc:script location="org/springframework/batch/core/schema-drop-sqlserver.sql" />
+	<jdbc:script location="org/springframework/batch/core/schema-sqlserver.sql" />
+  </jdbc:initialize-database>
  
 </beans>

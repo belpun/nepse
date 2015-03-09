@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.nepse.data.CompanyData;
+import com.nepse.domain.CompanyData;
 import com.nepse.exception.FileCreationException;
 
 public class CsvWriter {
@@ -39,7 +39,7 @@ public class CsvWriter {
 				data.append(company.getLastTradedPrice()).append(DELIMITER);
 				data.append(company.getLastTradedVolume()).append(DELIMITER);
 				data.append(company.getPercentageChange()).append(DELIMITER);
-				data.append(company.getOpen()).append(DELIMITER);
+				data.append(company.getOpenPrice()).append(DELIMITER);
 				data.append(company.getLow()).append(DELIMITER);
 				data.append(company.getHigh()).append(DELIMITER);
 				data.append(company.getVolume()).append("\n");
