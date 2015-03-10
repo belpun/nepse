@@ -49,6 +49,10 @@ public class Main {
 
 	}
 	
+	public static  Long getLongValue() {
+		return null;
+	}
+	
 
 
 }

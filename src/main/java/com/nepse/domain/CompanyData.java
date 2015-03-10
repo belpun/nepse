@@ -1,5 +1,7 @@
 package com.nepse.domain;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,9 +41,22 @@ public class CompanyData {
 	private String previousClosingPrice;
 	private String difference;
 	
+	private Date date;
 	
 	public CompanyData() {
 		
+	}
+	
+	public CompanyData(String noOfTransaction, String totalSharesTraded, String volume,
+			String high, String low,
+			String closingPrice, Date date) {
+		this.noOfTransaction = noOfTransaction;
+		this.totalSharesTraded = totalSharesTraded;
+		this.volume = volume;
+		this.high = high;
+		this.low = low;
+		this.closingPrice = closingPrice;
+		this.date = date;
 	}
 	
 	//for file
@@ -216,6 +231,14 @@ public class CompanyData {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.nepse.loader;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.batch.item.ItemWriter;
@@ -26,6 +28,8 @@ public class CompanyDataWriter implements ItemWriter<CompanyDataForm> {
 //			genericRepository.save(entity);
 //		}
 //	}
+	
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	public void write(List<? extends CompanyDataForm> items) throws Exception {
@@ -40,7 +44,7 @@ public class CompanyDataWriter implements ItemWriter<CompanyDataForm> {
 			String noOfTransaction = entity.getNoOfTransaction();
 			String totalShares = entity.getTotalShares();
 			
-			CompanyData companyData = new CompanyData(noOfTransaction, totalShares, amount, maxPrice, minPrice, closingPrice);
+			CompanyData companyData = new CompanyData(noOfTransaction, totalShares, amount, maxPrice, minPrice, closingPrice, dateFormat.parse(date));
 			
 			if(company != null) {
 				companyData.setCompany(company);
