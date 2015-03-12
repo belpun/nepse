@@ -2,7 +2,6 @@ package com.nepse.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+//import org.codehaus.jackson.JsonGenerationException;
+//import org.codehaus.jackson.map.JsonMappingException;
+//import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,30 +33,30 @@ public class NepsePriceController {
 		System.out.println("created the controller");
 	}
 
-	@RequestMapping(value = "/service/historicData/{symbol}", method = RequestMethod.GET)
-	public @ResponseBody String getJsonCompanyData(@PathVariable String symbol, HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException {
-		System.out.println("got the request");
-		Map<Date, CompanyData> companyData =null ;
-		try {
-		companyData = DataProvider.getCompanyData(symbol);
-		} catch (FileNotFoundException e) {
-		return "";
-		}
-		if (companyData!= null) {
-			List<String> convertToJsonFormat = convertToJsonFormat(companyData);
-			ObjectMapper mapper = new ObjectMapper();
-			String convertValue = mapper.writeValueAsString(convertToJsonFormat);
-			convertValue = convertValue.replace("[\"", "[[");
-			convertValue = convertValue.replace("\",\"", "],[");
-			convertValue = convertValue.replace("\"]", "]]");
-			System.out.println(convertValue);
-			
-			return convertValue;
-//			return "[[1411858800000,393.00,398.00,390.00,393.00],[1398639600000,390.00,397.00,382.00,390.00],[1402873200000,435.00,439.00,430.00,435.00]]";
-					//			return convertValue;
-		}
-		return "";
-	}
+//	@RequestMapping(value = "/service/historicData/{symbol}", method = RequestMethod.GET)
+//	public @ResponseBody String getJsonCompanyData(@PathVariable String symbol, HttpServletRequest request) throws JsonGenerationException, JsonMappingException, IOException {
+//		System.out.println("got the request");
+//		Map<Date, CompanyData> companyData =null ;
+//		try {
+//		companyData = DataProvider.getCompanyData(symbol);
+//		} catch (FileNotFoundException e) {
+//		return "";
+//		}
+//		if (companyData!= null) {
+//			List<String> convertToJsonFormat = convertToJsonFormat(companyData);
+//			ObjectMapper mapper = new ObjectMapper();
+//			String convertValue = mapper.writeValueAsString(convertToJsonFormat);
+//			convertValue = convertValue.replace("[\"", "[[");
+//			convertValue = convertValue.replace("\",\"", "],[");
+//			convertValue = convertValue.replace("\"]", "]]");
+//			System.out.println(convertValue);
+//			
+//			return convertValue;
+////			return "[[1411858800000,393.00,398.00,390.00,393.00],[1398639600000,390.00,397.00,382.00,390.00],[1402873200000,435.00,439.00,430.00,435.00]]";
+//					//			return convertValue;
+//		}
+//		return "";
+//	}
 
 	// public List<String> convertToJsonFormat(Map<Date, CompanyData>
 	// companyDatas){
