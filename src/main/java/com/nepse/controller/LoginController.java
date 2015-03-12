@@ -38,6 +38,90 @@ public class LoginController {
 	        return "/dashboard";
 	    }
 	 
+	 @RequestMapping(value = "/testJson", method = RequestMethod.GET)
+	    public @ResponseBody TestJson testJsonGet() {
+	 
+	        return getTestJson();
+	    }
+	 
+	 @RequestMapping(value = "/testJsonMap", method = RequestMethod.GET, produces="application/json")
+	    public @ResponseBody Map<String, Object> testJsonGetMap() {
+		 	String name = "CCGT";
+			List<Long> category = new ArrayList<Long>();
+			category.add(1387791900000l);
+			category.add(1387792200000l);
+			category.add(1387792500000l);
+			category.add(1387792800000l);
+			List<Integer> data = new ArrayList<Integer>();
+			data.add(8389);
+			data.add(8478);
+			data.add(8761);
+			data.add(8980);
+			data.add(9050);
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("name", name);
+			map.put("category", category);
+			map.put("data", data);
+			
+	        return map;
+	    }
+	 
+	 @RequestMapping(value = "/testMessage", method = RequestMethod.GET, produces="application/json")
+	    public @ResponseBody String testMsg() {
+	        return "test Message";
+	    }
+	 
+	 
+	 
+	 private TestJson getTestJson() {
+		String name = "CCGT";
+		List<Long> category = new ArrayList<Long>();
+		category.add(1387791900000l);
+		category.add(1387792200000l);
+		category.add(1387792500000l);
+		category.add(1387792800000l);
+		List<Integer> data = new ArrayList<Integer>();
+		data.add(8389);
+		data.add(8478);
+		data.add(8761);
+		data.add(8980);
+		data.add(9050);
+		
+		return new TestJson(name, category, data);
+	 }
+
 }
 
+class TestJson {
+	
+	private String name;
+	private List<Long> category;
+	private List<Integer> data;
+	
+	public TestJson(String name, List<Long> category, List<Integer> data) {
+		this.name = name;
+		this.category = category;
+		this.data = data;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public List<Long> getCategory() {
+		return category;
+	}
+	public void setCategory(List<Long> category) {
+		this.category = category;
+	}
+	public List<Integer> getData() {
+		return data;
+	}
+	public void setData(List<Integer> data) {
+		this.data = data;
+	}
 
+}
