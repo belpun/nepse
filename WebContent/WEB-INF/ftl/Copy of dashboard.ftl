@@ -381,8 +381,6 @@
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
-			
-			<#if model["companyInfoPresent"]>
             <div class="row">
                 <div class="col-lg-3 col-md-6">
                     <div class="panel panel-primary">
@@ -914,8 +912,6 @@
                 </div>
                 <!-- /.col-lg-4 -->
             </div>
-			
-			</#if>
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->
@@ -935,13 +931,11 @@
     <!-- Morris Charts JavaScript -->
     <script src="/nepseData/resources//bower_components/raphael/raphael-min.js"></script>
     <script src="/nepseData/resources//bower_components/morrisjs/morris.min.js"></script>
+    <script src="/nepseData/resources//js/morris-data.js"></script>
     
-    <#if model["companyInfoPresent"]>
-    	<script src="/nepseData/resources//js/morris-data.js"></script>
-    	
-    	    <script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <!-- for stocks -->
+    <script src="http://code.highcharts.com/stock/highstock.js"></script>
 	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
-    </#if>
 
     <!-- Custom Theme JavaScript -->
     <script src="/nepseData/resources//dist/js/sb-admin-2.js"></script>

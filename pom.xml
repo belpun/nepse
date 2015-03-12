@@ -10,6 +10,7 @@
 		<jackson.version>1.9.10</jackson.version>
 		<spring.batch.version>3.0.2.RELEASE</spring.batch.version>
 		<jdk.version>1.6</jdk.version>
+		<jackson.databind-version>2.2.3</jackson.databind-version>
 	</properties>
 
 	<dependencies>
@@ -77,10 +78,17 @@
 			<artifactId>freemarker</artifactId>
 			<version>2.3.20</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.codehaus.jackson</groupId> -->
+<!-- 			<artifactId>jackson-mapper-asl</artifactId> -->
+<!-- 			<version>${jackson.version}</version> -->
+<!-- 		</dependency> -->
+		
+				<!-- Jackson -->
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>${jackson.version}</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.databind-version}</version>
 		</dependency>
 		
 		<dependency>
