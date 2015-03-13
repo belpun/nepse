@@ -1,16 +1,10 @@
 package com.nepse.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.cache.TemplateLoader;
-import freemarker.template.TemplateModel;
+import org.springframework.context.annotation.ImportResource;
 
 @Configuration
+@ImportResource("classpath:dataSource.xml")
 public class DefaultConfig {
 	
 //	@Bean(initMethod = "init")

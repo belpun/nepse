@@ -59,7 +59,7 @@ $(function() {
           
           
           $(function () {
-        	    $.getJSON('http://localhost:8080/nepseData/web/stock', function (data) {
+        	    $.getJSON('http://localhost:8080/nepseData/web/company/MEGA/companyClosingPrice', function (data) {
 
         	        // create the chart
         	        $('#stock-chart').highcharts('StockChart', {

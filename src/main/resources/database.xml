@@ -6,17 +6,7 @@
 	http://www.springframework.org/schema/jdbc 
 	http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
  
-  <!-- connect to database -->
-  <bean id="dataSource"
-	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" />
-<!-- 	<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" /> -->
-	<property name="url" value="jdbc:jtds:sqlserver://localhost/Nepse" />
-<!-- 	<property name="url" value="jdbc:sqlite:nepse.sqlite" /> -->
-	<property name="username" value="sa" />
-	<property name="password" value="BitaPlus1" />
-  </bean>
- 
+ <import resource="classpath:dataSource.xml" />
   <bean id="transactionManager"
 	class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
  

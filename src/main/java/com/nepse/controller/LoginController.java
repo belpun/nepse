@@ -4,17 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nepse.dao.JDBCCompanyRepository;
+
 @Controller
 public class LoginController {
+	
+	@Autowired
+	private JDBCCompanyRepository companyRepository;
 	
 	 @RequestMapping(value = "/login", method = RequestMethod.GET)
 	    public String indexPage(@ModelAttribute("model") ModelMap model) {
@@ -43,6 +51,23 @@ public class LoginController {
 	 
 	        return getTestJson();
 	    }
+	 
+	 
+	 @RequestMapping(value = "/company/{companySybol}/companyClosingPrice", method = RequestMethod.GET)
+	 public @ResponseBody List<Object[]> companyClosingPrice(@PathVariable String companySybol) {
+		 
+		Map<Long, Float> closingPrice = companyRepository.getClosingPrice(companySybol);
+		
+		List<Object[]> prices = new ArrayList<Object[]>();
+		for (Entry<Long, Float> temp : closingPrice.entrySet()){
+			Object[] entry = new Object[2];
+			entry[0] = temp.getKey();
+			entry[1] = temp.getValue();
+			prices.add(entry);
+			
+		}
+		 return prices;
+	 }
 	 
 	 @RequestMapping(value = "/testJsonMap", method = RequestMethod.GET, produces="application/json")
 	    public @ResponseBody Map<String, Object> testJsonGetMap() {
