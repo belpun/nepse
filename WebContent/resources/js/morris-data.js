@@ -53,5 +53,36 @@ $(function() {
         	  options.series[0].data = json['data'];
               chart = new Highcharts.Chart(options);
           });
+          
+          
+          
+          
+          
+          $(function () {
+        	    $.getJSON('http://localhost:8080/nepseData/web/stock', function (data) {
+
+        	        // create the chart
+        	        $('#stock-chart').highcharts('StockChart', {
+
+
+
+        	            rangeSelector : {
+        	                selected : 1
+        	            },
+
+        	            title : {
+        	                text : 'AAPL Stock Price'
+        	            },
+
+        	            series : [{
+        	                name : 'AAPL',
+        	                data : data,
+        	                tooltip: {
+        	                    valueDecimals: 2
+        	                }
+        	            }]
+        	        });
+        	    });
+        	});
 	 
 });

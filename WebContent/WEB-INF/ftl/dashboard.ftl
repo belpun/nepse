@@ -484,6 +484,15 @@
                         </div>
                         <!-- /.panel-body -->
                     </div>
+                    
+                   <div class="panel panel-default">
+                
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="stock-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
                     <!-- /.panel -->
                     
                     <!-- /.panel -->

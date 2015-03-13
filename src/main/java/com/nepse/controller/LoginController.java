@@ -57,7 +57,6 @@ public class LoginController {
 			data.add(8478);
 			data.add(8761);
 			data.add(8980);
-			data.add(9050);
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("name", name);
@@ -65,6 +64,28 @@ public class LoginController {
 			map.put("data", data);
 			
 	        return map;
+	    }
+	 
+	 
+	 @RequestMapping(value = "/stock", method = RequestMethod.GET, produces="application/json")
+	    public @ResponseBody List<List<Object>> getStockMap() {
+		 List<List<Object>> category = new ArrayList<List<Object>>();
+		 List<Object> category1 = new ArrayList<Object>();
+		 category1.add(1147651200000l);
+		 category1.add(67.79);
+		 
+		 List<Object> category2 = new ArrayList<Object>();
+		 category2.add(1147737600000l);
+		 category2.add(64.98);
+		 
+		 List<Object> category3 = new ArrayList<Object>();
+		 category3.add(1147910400000l);
+		 category3.add(63.18);
+		 
+		 category.add(category1);
+		 category.add(category2);
+		 category.add(category3);
+	     return category;
 	    }
 	 
 	 @RequestMapping(value = "/testMessage", method = RequestMethod.GET, produces="application/json")
