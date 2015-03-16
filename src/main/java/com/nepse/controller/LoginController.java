@@ -1,5 +1,7 @@
 package com.nepse.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nepse.analysis.TechnicalAnalysisService;
 import com.nepse.dao.JDBCCompanyRepository;
 
 @Controller
@@ -23,6 +26,9 @@ public class LoginController {
 	
 	@Autowired
 	private JDBCCompanyRepository companyRepository;
+	
+	@Autowired
+	private TechnicalAnalysisService technicalAnalysisService;
 	
 	 @RequestMapping(value = "/login", method = RequestMethod.GET)
 	    public String indexPage(@ModelAttribute("model") ModelMap model) {
@@ -53,16 +59,37 @@ public class LoginController {
 	    }
 	 
 	 
-	 @RequestMapping(value = "/company/{companySybol}/companyClosingPrice", method = RequestMethod.GET)
-	 public @ResponseBody List<Object[]> companyClosingPrice(@PathVariable String companySybol) {
+	 @RequestMapping(value = "/company/{companySymbol}/companyClosingPrice", method = RequestMethod.GET)
+	 public @ResponseBody List<Object[]> companyClosingPrice(@PathVariable String companySymbol) {
 		 
-		Map<Long, Float> closingPrice = companyRepository.getClosingPrice(companySybol);
+		Map<Long, Double> closingPrice = companyRepository.getClosingPrice(companySymbol);
 		
 		List<Object[]> prices = new ArrayList<Object[]>();
-		for (Entry<Long, Float> temp : closingPrice.entrySet()){
+		for (Entry<Long, Double> temp : closingPrice.entrySet()){
 			Object[] entry = new Object[2];
 			entry[0] = temp.getKey();
 			entry[1] = temp.getValue();
+			prices.add(entry);
+			
+		}
+		 return prices;
+	 }
+	 
+	 
+	 @RequestMapping(value = "/company/{companySymbol}/rsiCalculation", method = RequestMethod.GET)
+	 public @ResponseBody List<Object[]> rsiCalculation(@PathVariable String companySymbol) {
+		 
+		Map<Long, Double> rsiMap = technicalAnalysisService.rsiWith14DaysCalculation(companySymbol);
+		
+		List<Object[]> prices = new ArrayList<Object[]>();
+		for (Entry<Long, Double> temp : rsiMap.entrySet()){
+			Object[] entry = new Object[2];
+			entry[0] = temp.getKey();
+			
+			 BigDecimal bd = new BigDecimal(temp.getValue());
+			 bd = bd.setScale(2, RoundingMode.HALF_UP);
+			
+			entry[1] =  bd.doubleValue();
 			prices.add(entry);
 			
 		}

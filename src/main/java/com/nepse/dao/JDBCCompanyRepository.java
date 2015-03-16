@@ -28,16 +28,16 @@ public class JDBCCompanyRepository {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 	
-	public Map<Long, Float> getClosingPrice(String symbol) {
+	public Map<Long, Double> getClosingPrice(String symbol) {
 		
-	       ResultSetExtractor<Map<Long, Float>> extractor = new ResultSetExtractor<Map<Long, Float>>() {
+	       ResultSetExtractor<Map<Long, Double>> extractor = new ResultSetExtractor<Map<Long, Double>>() {
                @Override
-               public Map<Long, Float> extractData(ResultSet rs) throws SQLException {
-            	   Map<Long, Float> closingPrices = new TreeMap<Long, Float>();
+               public Map<Long, Double> extractData(ResultSet rs) throws SQLException {
+            	   Map<Long, Double> closingPrices = new TreeMap<Long, Double>();
                    while (rs.next()) {
                 	   
                 	   Date date = rs.getDate(1);
-                	   Float closingPrice = rs.getFloat(2);
+                	   Double closingPrice = rs.getDouble(2);
                 	   
                 	   closingPrices.put(date.getTime(), closingPrice);
                    }
