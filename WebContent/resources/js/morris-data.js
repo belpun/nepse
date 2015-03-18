@@ -104,6 +104,7 @@ $(function() {
         	            },
 
         	            series : [{
+        	            	type: 'areaspline',
         	                name : 'rsi',
         	                data : data,
         	                tooltip: {

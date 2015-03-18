@@ -1,4 +1,4 @@
-package com.nepse.loader;
+package com.nepse.loader.initilizer;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -11,22 +11,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.nepse.config.DefaultDatabaseConfig;
 import com.nepse.report.JobConfig;
 
-public class CompanyLoaderFromCsv {
+public class InitilizeCompanyHistoricDataFromWebToCsvJob {
 
 	public static void main(String[] args) {
-
-//		String[] springConfig  = 
-//			{	"classpath:database.xml",
-//				"classpath:batch_context.xml",
-//				"classpath:job-reader.xml" 
-//			};
-//	 
-//		ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
-		
+	
 		ApplicationContext context = new AnnotationConfigApplicationContext(DefaultDatabaseConfig.class, JobConfig.class);
-	 
+		 
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
-		Job job = (Job) context.getBean("CompanyLoadJob");
+		Job job = (Job) context.getBean("loadArchiveDataFromWebJob");
 	 
 		try {
 	 
@@ -43,7 +35,6 @@ public class CompanyLoaderFromCsv {
 		System.out.println("Done");
 		((ConfigurableApplicationContext)context).close();
 	 
-	  }
 	
-
+	}
 }

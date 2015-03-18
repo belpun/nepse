@@ -75,7 +75,6 @@ public class LoginController {
 		 return prices;
 	 }
 	 
-	 
 	 @RequestMapping(value = "/company/{companySymbol}/rsiCalculation", method = RequestMethod.GET)
 	 public @ResponseBody List<Object[]> rsiCalculation(@PathVariable String companySymbol) {
 		 

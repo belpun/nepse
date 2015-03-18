@@ -7,9 +7,9 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource(value={	"classpath:database.xml",
 		"classpath:batch_context.xml",
 		"classpath:job-reader.xml", 
-		"classpath:dataSource.xml", 
-		
+		"classpath:dataSource.xml",
+		"classpath:job/writeArchivedDataFromWebToCsvJob.xml"
 	})
-public class ReportConfig {
+public class JobConfig {
 
 }

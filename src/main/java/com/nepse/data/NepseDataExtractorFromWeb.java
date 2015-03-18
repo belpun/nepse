@@ -10,16 +10,22 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nepse.domain.CompanyData;
+import com.nepse.exception.CannotConnectToDataServer;
 import com.nepse.exception.DataNotAvailable;
 
 public class NepseDataExtractorFromWeb {
 	private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private static final Logger logger = LoggerFactory.getLogger(NepseDataExtractorFromWeb.class);
 
 	public List<CompanyData> extractLiveData() {
 		
@@ -108,19 +114,26 @@ public class NepseDataExtractorFromWeb {
 	}
 	
 	public  Map<Date, CompanyData> extractArchivedDataForCompany(String symbol, String startdate, String  endDate) {
-		Map<Date, CompanyData> allData = new LinkedHashMap<Date, CompanyData>();
+		Map<Date, CompanyData> allData = new TreeMap<Date, CompanyData>();
 		Document doc = null;
 			try {
 			
 			//date sample Date=2014-08-22
-			doc = Jsoup.connect("http://www.nepalstock.com.np/stockWisePrices")
+			doc = Jsoup.connect("http://www.nepalstock.com.np/stockWisePrices").timeout(10000)
 					.data("startDate", startdate)
 					.data("endDate", endDate)
 					.data("stock-symbol", symbol)
 					.data("_limit", "500")
 					.post();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CannotConnectToDataServer("Cannot connect to nepalsotck.com at the moment");
+		}
+			//wait for the server to reponse back
+			
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e1) {
+			logger.error("Interuppted while sleeping to get response from nepalstock.com");
 		}
 			
 		Elements dataTable = doc.getElementsByTag("table").get(0).select("tbody").select("tr");

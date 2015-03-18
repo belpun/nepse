@@ -2,13 +2,18 @@ package com.nepse.writer;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nepse.domain.CompanyData;
 import com.nepse.exception.FileCreationException;
@@ -18,9 +23,11 @@ public class CsvWriter {
 	private final static String NEPSE_ARCHIVED_HEADERS = "S.No,Traded Companies,No.of Transaction,Max.price,Min.price,Closing Price,Total Share,Amount,Prevous Closing, Difference Rs.";
 	private final static String NEPSE_COMPANY_HEADERS = "Date,No.of Transaction,Total Share,Amount,Max.price,Min.price,Closing Price";
 	private final static String DELIMITER = ",";
+	
+	private final static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	private final static Logger logger = LoggerFactory.getLogger(CsvWriter.class);
 
 	public void writeLiveDataToCsvFile(List<CompanyData> companies, String location, String fileName) {
-
 		File outputFile;
 		OutputStream outputStream = null;
 		try {
@@ -92,7 +99,8 @@ public class CsvWriter {
 			}
 
 		} catch (IOException e) {
-			throw new FileCreationException("cannot create a file");
+			System.out.println("cannot open a file");
+			logger.error("cannot open a file", e);
 		} finally {
 			if(outputStream != null) {
 				try {
@@ -100,26 +108,27 @@ public class CsvWriter {
 			
 				outputStream.close();
 				} catch (IOException e) {
-					throw new FileCreationException("cannot create a file");
+					System.out.println("cannot write or flush to the file ");
+					logger.error("cannot write or flush to the file ", e);
 				}
 			}
 		}
 
 	}
 	
-	public void writeDataPerCompanyToCsvFile(Map<Date, CompanyData> companiesDatas, String location, String companySymbol, boolean dateInMilliSecond) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		File outputFile;
+	public void writeDataPerCompanyToCsvFile(Map<Date, CompanyData> companiesDatas, File outputFile, boolean dateInMilliSecond, boolean append) {
 		
-		String fileName = location + "\\"+companySymbol + ".csv";
-		OutputStream outputStream = null;
+		Writer fw = null;
 		try {
-			outputFile = new File(fileName);
 
-			outputStream = new FileOutputStream(outputFile);
+//			outputStream = new FileOutputStream(outputFile);
+			
+			fw = new FileWriter(outputFile, append);
 
-			String headerLine = NEPSE_COMPANY_HEADERS + "\n";
-			outputStream.write(headerLine.getBytes());
+			if(!append) {
+				String headerLine = NEPSE_COMPANY_HEADERS + "\n";
+				fw.append(headerLine);
+			}
 
 			for(Date key : companiesDatas.keySet()){
 				
@@ -142,17 +151,17 @@ public class CsvWriter {
 					data.append(company.getClosingPrice()).append("\n");
 //					data.append(company.getPreviousClosingPrice()).append(DELIMITER);
 //					data.append(company.getDifference()).append("\n");
-					outputStream.write(data.toString().getBytes());
+					fw.append(data.toString());
 		}
 
 		} catch (IOException e) {
 			throw new FileCreationException("cannot create a file");
 		} finally {
-			if(outputStream != null) {
+			if(fw != null) {
 				try {
-					outputStream.flush();
+					fw.flush();
 			
-				outputStream.close();
+					fw.close();
 				} catch (IOException e) {
 					throw new FileCreationException("cannot create a file");
 				}

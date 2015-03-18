@@ -21,6 +21,8 @@ public class JDBCCompanyRepository {
 	 private static String GET_COMPANY_CLOSING_PRICE = "select data.date as dd, data.closingPrice as price from CompanyData data inner join Company com "
 			 + " on data.company_id = com.id "
 			 + " where com.symbol = ? ";
+	 
+	 private static String GET_COMPANY_AND_SYMBOL = "select symbol, name from Company";
 	    
 	    
 	@Autowired
@@ -47,6 +49,26 @@ public class JDBCCompanyRepository {
            };
            
 		return jdbcTemplate.query(GET_COMPANY_CLOSING_PRICE, new Object[]{symbol}, extractor);
+	}
+	
+	public Map<String, String> getCompanySymbol() {
+		
+	       ResultSetExtractor<Map<String, String>> extractor = new ResultSetExtractor<Map<String, String>>() {
+            @Override
+            public Map<String, String> extractData(ResultSet rs) throws SQLException {
+         	   Map<String, String> companyInfo = new TreeMap<String, String>();
+                while (rs.next()) {
+             	   String name = rs.getString("name");
+             	   String symbol = rs.getString("symbol");
+             	   
+             	   companyInfo.put(symbol, name);
+                }
+                return companyInfo;
+            }
+
+        };
+        
+		return jdbcTemplate.query(GET_COMPANY_AND_SYMBOL, extractor);
 	}
 
 }
