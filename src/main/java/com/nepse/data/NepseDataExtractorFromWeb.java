@@ -7,11 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -113,7 +115,64 @@ public class NepseDataExtractorFromWeb {
 		return companies;
 	}
 	
-	public  Map<Date, CompanyData> extractArchivedDataForCompany(String symbol, String startdate, String  endDate) {
+	
+	public  Map<Date, CompanyData> extractArchivedDataForCompanyAll(String symbol) {
+		DateTime currentDate = new DateTime();
+		String toadyDate = dateFormatter.format(currentDate.toDate());
+		
+		currentDate = currentDate.minusYears(10);
+		
+		String startDate = dateFormatter.format(currentDate.toDate());
+		
+		
+		Map<Date, CompanyData> extractArchivedDataForCompanyAll = extractArchivedDataForCompanyAll(symbol, startDate, toadyDate);
+		
+		return extractArchivedDataForCompanyAll;
+	}
+	
+	public  Map<Date, CompanyData> extractArchivedDataForCompanyAll(String symbol, String startdate, String  endDate) {
+
+		Map<Date, CompanyData> mainData = new TreeMap<Date, CompanyData>();
+
+		
+		ExtractionResult result = extractArchivedDataForCompany(symbol, startdate, endDate);
+		mainData.putAll(result.getDatas());
+		
+		while(result != null && result.getDatas().size() == 500) {
+			boolean desc = false;
+			
+			Date firstDate = result.getFirstDate();
+			Date lastDate = result.getLastDate();
+			
+			if(firstDate.after(lastDate)) {
+				desc = true;
+			}
+			
+			DateTime jodaLastDate = new DateTime(lastDate);
+			if(desc) {
+				jodaLastDate = jodaLastDate.plusDays(1);
+				
+				
+				endDate = dateFormatter.format(jodaLastDate.toDate());
+				
+				result = extractArchivedDataForCompany(symbol, startdate, endDate);
+			} else {
+				jodaLastDate = jodaLastDate.minusDays(1);
+				startdate = dateFormatter.format(jodaLastDate.toDate());
+				
+				result = extractArchivedDataForCompany(symbol, startdate, endDate);
+			}
+			
+			if(result != null && result.getDatas() != null) {
+				mainData.putAll(result.getDatas());
+			}
+		
+		}
+
+		return mainData;
+	}
+	
+	public ExtractionResult extractArchivedDataForCompany(String symbol, String startdate, String  endDate) {
 		Map<Date, CompanyData> allData = new TreeMap<Date, CompanyData>();
 		Document doc = null;
 			try {
@@ -129,21 +188,30 @@ public class NepseDataExtractorFromWeb {
 			throw new CannotConnectToDataServer("Cannot connect to nepalsotck.com at the moment");
 		}
 			//wait for the server to reponse back
+			sleep();
 			
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e1) {
-			logger.error("Interuppted while sleeping to get response from nepalstock.com");
-		}
 			
 		Elements dataTable = doc.getElementsByTag("table").get(0).select("tbody").select("tr");
 		System.out.println(dataTable);
+		
+		ExtractionResult result = new ExtractionResult();
+		
+		if (dataTable.size() < 4) {
+			return null;
+		} 
+		
 		for (int i = 2; i < dataTable.size() -1; i++) {
 			Elements stockCompany = dataTable.get(i).select("td");
-//			int symbolNumber = Integer.valueOf(stockCompany.get(0).text());
+//				int symbolNumber = Integer.valueOf(stockCompany.get(0).text());
 			Date date = null;
 			try {
 				date = dateFormatter.parse(stockCompany.get(1).text());
+				 if (i == 2) {
+					 result.setFirstDate(date);
+				 } else if (i == dataTable.size() -2) {
+					 result.setLastDate(date);
+				 }
+				
 			} catch (ParseException e) {
 				System.out.println("Cannot parse the data from the web so skipping it");
 				continue;
@@ -156,11 +224,55 @@ public class NepseDataExtractorFromWeb {
 			String closingPrice = stockCompany.get(7).text();
 			
 			CompanyData companyData = new CompanyData(totalTransaction, totalSharesTraded, volume, maxPrice, minPrice, closingPrice);
-			
 			allData.put(date, companyData);
 		}
-		return allData;
+		
+		result.setDatas(allData);
+			
+		return result;
 	}
+	
+//	private void printMap(Map<Date, CompanyData> allData){
+//		
+//		for (Date key : allData.keySet()) {
+//			System.out.println(dateFormatter.format(key));
+//		}
+//		
+//	}
+	
+	private void sleep(){
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			logger.error("Interuppted while sleeping to get response from nepalstock.com");
+		}
+	
+	}
+	
+	
+//	private Map<Date, CompanyData> getDataFromGetRequest(String link) {
+//		Document doc = null;
+//		try {
+//		
+//		//date sample Date=2014-08-22
+//		doc = Jsoup.connect(link).timeout(10000)
+//				.get();
+//		sleep();
+//		} catch (IOException e) {
+//		throw new CannotConnectToDataServer("Cannot connect to nepalsotck.com at the moment");
+//	}
+//		
+//		ExtractionResult extractResultFromDoc = extractResultFromDoc(doc, false);
+//		
+//		return extractResultFromDoc.getDataMap();
+//	}
+
+//	private ExtractionResult extractResultFromDoc(Document doc, boolean getOtherPageLinks){
+//		
+//					
+//		extractionResult.setDataMap(allData);
+//		return extractionResult;
+//	}
 	
 	
 	public Map<Date, List<CompanyData>> extractArchivedData(String fromDate, String toDate) {
@@ -202,4 +314,33 @@ public class NepseDataExtractorFromWeb {
 		
 	}
 		
+}
+
+class ExtractionResult{
+	private Date firstDate;
+	private Date lastDate;
+	
+	private Map<Date, CompanyData> datas;
+	
+	
+	public Map<Date, CompanyData> getDatas() {
+		return datas;
+	}
+	public void setDatas(Map<Date, CompanyData> datas) {
+		this.datas = datas;
+	}
+	public Date getFirstDate() {
+		return firstDate;
+	}
+	public void setFirstDate(Date firstDate) {
+		this.firstDate = firstDate;
+	}
+	public Date getLastDate() {
+		return lastDate;
+	}
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
+	}
+	
+	
 }

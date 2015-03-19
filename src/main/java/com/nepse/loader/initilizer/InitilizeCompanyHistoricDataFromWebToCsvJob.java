@@ -9,13 +9,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.nepse.config.DefaultDatabaseConfig;
+import com.nepse.dao.JDBCCompanyRepository;
 import com.nepse.report.JobConfig;
 
 public class InitilizeCompanyHistoricDataFromWebToCsvJob {
 
 	public static void main(String[] args) {
 	
-		ApplicationContext context = new AnnotationConfigApplicationContext(DefaultDatabaseConfig.class, JobConfig.class);
+		ApplicationContext context = new AnnotationConfigApplicationContext(DefaultDatabaseConfig.class, JobConfig.class, JDBCCompanyRepository.class);
 		 
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
 		Job job = (Job) context.getBean("loadArchiveDataFromWebJob");

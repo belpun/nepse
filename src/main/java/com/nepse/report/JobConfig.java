@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ImportResource;
 		"classpath:batch_context.xml",
 		"classpath:job-reader.xml", 
 		"classpath:dataSource.xml",
-		"classpath:job/writeArchivedDataFromWebToCsvJob.xml"
 	})
 public class JobConfig {
 

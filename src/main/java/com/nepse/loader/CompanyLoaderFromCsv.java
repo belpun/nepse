@@ -9,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.nepse.config.DefaultDatabaseConfig;
+import com.nepse.dao.JDBCCompanyRepository;
 import com.nepse.report.JobConfig;
 
 public class CompanyLoaderFromCsv {
