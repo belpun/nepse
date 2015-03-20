@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>SB  </title>
 
     <!-- Bootstrap Core CSS -->
     <link href="/nepseData/resources//bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,6 +35,21 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
+    <!typeAhead css for the auto Display-->
+     <link href="/nepseData/resources//css/typeAhead.css" rel="stylesheet">
+     
+     <script type="text/javascript">
+	 	var companylist = [ <#list model.companyMap?keys as key>"${model.companyMap[key]}",</#list>];
+	 	
+	 	var companyMap = { <#list model.companyMap?keys as key>"${model.companyMap[key]}" : "${key}",</#list>};
+	 	
+	 	
+	 	<#if model["companyInfoPresent"]>
+	 		var companySymbol = "${model.companySymbol}";
+	 	</#if>
+	
+    </script>
 
 </head>
 
@@ -270,9 +285,9 @@
                     <ul class="nav" id="side-menu">
                         <li class="sidebar-search">
                             <div class="input-group custom-search-form">
-                                <input type="text" class="form-control" placeholder="Search...">
+                                <input id="searchCompany" type="text" class="typeahead" placeholder="Search...">
                                 <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                                <button id="searchCompanyBtn" class="btn btn-default" type="button">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
@@ -495,6 +510,15 @@
                     </div>
                     <!-- /.panel -->
                     
+                     <div class="panel panel-default">
+                
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="simpleMovingAverage-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    
                     <!-- /.panel -->
                     
                     <!-- /.panel -->
@@ -526,11 +550,14 @@
     <script src="/nepseData/resources//bower_components/morrisjs/morris.min.js"></script>
     
     <#if model["companyInfoPresent"]>
-    	<script src="/nepseData/resources//js/morris-data.js"></script>
     	
     	    <script src="http://code.highcharts.com/stock/highstock.js"></script>
 	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+    	<script src="/nepseData/resources//js/morris-data.js"></script>
     </#if>
+
+    	<script src="/nepseData/resources//js/typeAheadBundle.js"></script>
+    	<script src="/nepseData/resources//js/typeAheadCustom.js"></script>
 
     <!-- Custom Theme JavaScript -->
     <script src="/nepseData/resources//dist/js/sb-admin-2.js"></script>

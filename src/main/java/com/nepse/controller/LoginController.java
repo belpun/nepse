@@ -45,10 +45,20 @@ public class LoginController {
 		 model.addAttribute("companyInfoPresent", false);
 		 if(company != null) {
 			 model.addAttribute("companyInfoPresent", true);
-			 model.addAttribute("companyName", company);
+			 model.addAttribute("companySymbol", company);
+			 
 		 }
+		 Map<String, String> companyMap = companyRepository.getCompanySymbol();
+		 model.addAttribute("companyMap", companyMap);
 		 
 		 model.addAttribute("test", "testMessage");
+
+		 List<String> list = new ArrayList<String>();
+		 list.add("a");
+		 list.add("b");
+		 model.addAttribute("list", list);
+		 
+		 
 	        return "/dashboard";
 	    }
 	 
@@ -63,17 +73,27 @@ public class LoginController {
 	 public @ResponseBody List<Object[]> companyClosingPrice(@PathVariable String companySymbol) {
 		 
 		Map<Long, Double> closingPrice = companyRepository.getClosingPrice(companySymbol);
-		
-		List<Object[]> prices = new ArrayList<Object[]>();
-		for (Entry<Long, Double> temp : closingPrice.entrySet()){
-			Object[] entry = new Object[2];
-			entry[0] = temp.getKey();
-			entry[1] = temp.getValue();
-			prices.add(entry);
-			
-		}
-		 return prices;
+		 return  createJson(closingPrice);
 	 }
+	 @RequestMapping(value = "/company/{companySymbol}/simpleMovingAverage", method = RequestMethod.GET)
+	 public @ResponseBody List<Object[]> simpleMovinAverage(@PathVariable String companySymbol) {
+		 
+		 Map<Long, Double> closingPrice = technicalAnalysisService.simpleMovingAverage(companySymbol);
+		 
+		 return createJson(closingPrice);
+	 }
+
+	private List<Object[]> createJson(Map<Long, Double> closingPrice) {
+		List<Object[]> prices = new ArrayList<Object[]>();
+		 for (Entry<Long, Double> temp : closingPrice.entrySet()){
+			 Object[] entry = new Object[2];
+			 entry[0] = temp.getKey();
+			 entry[1] = temp.getValue();
+			 prices.add(entry);
+			 
+		 }
+		return prices;
+	}
 	 
 	 @RequestMapping(value = "/company/{companySymbol}/rsiCalculation", method = RequestMethod.GET)
 	 public @ResponseBody List<Object[]> rsiCalculation(@PathVariable String companySymbol) {

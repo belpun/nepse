@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,8 +135,9 @@ public class NepseDataExtractorFromWeb {
 
 		
 		ExtractionResult result = extractArchivedDataForCompany(symbol, startdate, endDate);
-		mainData.putAll(result.getDatas());
-		
+		if(result != null) {
+			mainData.putAll(result.getDatas());
+		}
 		while(result != null && result.getDatas().size() == 500) {
 			boolean desc = false;
 			

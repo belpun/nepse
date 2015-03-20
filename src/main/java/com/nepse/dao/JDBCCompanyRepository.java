@@ -20,7 +20,7 @@ public class JDBCCompanyRepository {
 	
 	 private static String GET_COMPANY_CLOSING_PRICE = "select data.date as dd, data.closingPrice as price from CompanyData data inner join Company com "
 			 + " on data.company_id = com.id "
-			 + " where com.symbol = ? ";
+			 + " where com.symbol = ? ORDER BY data.date ASC";
 	 
 	 private static String GET_COMPANY_AND_SYMBOL = "select symbol, name from Company";
 	    
