@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+import com.nepse.domain.CompanyData;
+
 @Repository
 public class JDBCCompanyRepository {
 	 private static final Logger LOGGER = LoggerFactory.getLogger(JDBCCompanyRepository.class);
@@ -23,6 +25,12 @@ public class JDBCCompanyRepository {
 			 + " where com.symbol = ? ORDER BY data.date ASC";
 	 
 	 private static String GET_COMPANY_AND_SYMBOL = "select symbol, name from Company";
+
+	 private static String GET_COMPANYDATA = "select cd.date, cd.openPrice, cd.closingPrice, cd.high, cd.low from CompanyData cd "
+			 + " inner join Company c on c.id = cd.company_id "
+			 + " where c.symbol = ? ";
+	 
+	 
 	    
 	    
 	@Autowired
@@ -69,6 +77,37 @@ public class JDBCCompanyRepository {
         };
         
 		return jdbcTemplate.query(GET_COMPANY_AND_SYMBOL, extractor);
+	}
+	
+	public Map<Long, CompanyData> getCompanyData(String symbol) {
+		
+	     ResultSetExtractor<Map<Long, CompanyData>> extractor = new ResultSetExtractor<Map<Long, CompanyData>>() {
+	    	 
+         @Override
+         public Map<Long, CompanyData> extractData(ResultSet rs) throws SQLException {
+      	   Map<Long, CompanyData> companyInfo = new TreeMap<Long, CompanyData>();
+             while (rs.next()) {
+          	   Date date = new Date(rs.getDate("date").getTime());
+          	   String open = rs.getString("open");
+          	   String close = rs.getString("close");
+          	   String high = rs.getString("high");
+          	   String low = rs.getString("low");
+          	   
+          	   CompanyData companyData = new CompanyData();
+          	   companyData.setDate(date);
+          	   companyData.setOpenPrice(open);
+          	   companyData.setClosingPrice(close);
+          	   companyData.setHigh(high);
+          	   companyData.setLow(low);
+          	  
+          	 companyInfo.put(date.getTime(), companyData);
+             }
+             return companyInfo;
+         }
+
+     };
+     
+		return jdbcTemplate.query(GET_COMPANYDATA,  new Object[]{symbol}, extractor);
 	}
 
 }
