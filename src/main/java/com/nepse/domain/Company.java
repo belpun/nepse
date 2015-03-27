@@ -20,7 +20,6 @@ public class Company {
 	}
 	
 	public Company(String name, String symbol) {
-		super();
 		this.name = name;
 		this.symbol = symbol;
 	}
@@ -28,7 +27,7 @@ public class Company {
 	@Column(nullable=false)
 	private String name;
 	
-	@Column(nullable=false)
+	@Column(nullable=false, unique=true)
 	private String symbol;
 
 	public String getName() {

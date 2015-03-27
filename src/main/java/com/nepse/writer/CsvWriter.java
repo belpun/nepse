@@ -22,12 +22,15 @@ public class CsvWriter {
 	private final static String NEPSE_LIVE_HEADERS = "S.No,Company Name,Symbol,LTP,LTV,% Change,Open, Low, High,Volume";
 	private final static String NEPSE_ARCHIVED_HEADERS = "S.No,Traded Companies,No.of Transaction,Max.price,Min.price,Closing Price,Total Share,Amount,Prevous Closing, Difference Rs.";
 	private final static String NEPSE_COMPANY_HEADERS = "Date,No.of Transaction,Total Share,Amount,Max.price,Min.price,Closing Price";
+	private final static String NEPSE_OPENING_PRICE_COMPANY_HEADERS = "Date,Open";
 	private final static String DELIMITER = ",";
-	
-	private final static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	private final static Logger logger = LoggerFactory.getLogger(CsvWriter.class);
 
-	public void writeLiveDataToCsvFile(List<CompanyData> companies, String location, String fileName) {
+	private final static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	private final static Logger logger = LoggerFactory
+			.getLogger(CsvWriter.class);
+
+	public void writeLiveDataToCsvFile(List<CompanyData> companies,
+			String location, String fileName) {
 		File outputFile;
 		OutputStream outputStream = null;
 		try {
@@ -57,11 +60,11 @@ public class CsvWriter {
 		} catch (IOException e) {
 			throw new FileCreationException("cannot create a file");
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.flush();
-			
-				outputStream.close();
+
+					outputStream.close();
 				} catch (IOException e) {
 					throw new FileCreationException("cannot create a file");
 				}
@@ -69,13 +72,15 @@ public class CsvWriter {
 		}
 
 	}
-	
-	public void writeArchivedDataToCsvFile(List<CompanyData> companies, String location, String fileName, String requestedDate) {
+
+	public void writeArchivedDataToCsvFile(List<CompanyData> companies,
+			String location, String fileName, String requestedDate) {
 
 		File outputFile;
 		OutputStream outputStream = null;
 		try {
-			outputFile = createNewOutputFileforArchived(location, fileName, requestedDate);
+			outputFile = createNewOutputFileforArchived(location, fileName,
+					requestedDate);
 
 			outputStream = new FileOutputStream(outputFile);
 
@@ -92,7 +97,8 @@ public class CsvWriter {
 				data.append(company.getClosingPrice()).append(DELIMITER);
 				data.append(company.getVolume()).append(DELIMITER);
 				data.append(company.getAmount()).append(DELIMITER);
-				data.append(company.getPreviousClosingPrice()).append(DELIMITER);
+				data.append(company.getPreviousClosingPrice())
+						.append(DELIMITER);
 				data.append(company.getDifference()).append("\n");
 
 				outputStream.write(data.toString().getBytes());
@@ -102,11 +108,11 @@ public class CsvWriter {
 			System.out.println("cannot open a file");
 			logger.error("cannot open a file", e);
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.flush();
-			
-				outputStream.close();
+
+					outputStream.close();
 				} catch (IOException e) {
 					System.out.println("cannot write or flush to the file ");
 					logger.error("cannot write or flush to the file ", e);
@@ -115,52 +121,101 @@ public class CsvWriter {
 		}
 
 	}
-	
-	public void writeDataPerCompanyToCsvFile(Map<Date, CompanyData> companiesDatas, File outputFile, boolean dateInMilliSecond, boolean append) {
-		
+
+	public void writeDataPerCompanyToCsvFile(
+			Map<Date, CompanyData> companiesDatas, File outputFile,
+			boolean dateInMilliSecond, boolean append) {
+
 		Writer fw = null;
 		try {
 
-//			outputStream = new FileOutputStream(outputFile);
-			
+			// outputStream = new FileOutputStream(outputFile);
+
 			fw = new FileWriter(outputFile, append);
 
-			if(!append) {
+			if (!append) {
 				String headerLine = NEPSE_COMPANY_HEADERS + "\n";
 				fw.append(headerLine);
 			}
 
-			for(Date key : companiesDatas.keySet()){
-				
+			for (Date key : companiesDatas.keySet()) {
+
 				CompanyData company = companiesDatas.get(key);
-					
-					StringBuilder data = new StringBuilder();
-					if (dateInMilliSecond) {
-						data.append(key.getTime()).append(DELIMITER);
-					} else {
-						data.append(df.format(key)).append(DELIMITER);
-					}
-					
-//					data.append(company.getSymbolNumber()).append(DELIMITER);
-//					data.append(company.getName()).append(DELIMITER);
-					data.append(company.getNoOfTransaction()).append(DELIMITER);
-					data.append(company.getTotalSharesTraded()).append(DELIMITER);
-					data.append(company.getVolume()).append(DELIMITER);
-					data.append(company.getHigh()).append(DELIMITER);
-					data.append(company.getLow()).append(DELIMITER);
-					data.append(company.getClosingPrice()).append("\n");
-//					data.append(company.getPreviousClosingPrice()).append(DELIMITER);
-//					data.append(company.getDifference()).append("\n");
-					fw.append(data.toString());
-		}
+
+				StringBuilder data = new StringBuilder();
+				if (dateInMilliSecond) {
+					data.append(key.getTime()).append(DELIMITER);
+				} else {
+					data.append(df.format(key)).append(DELIMITER);
+				}
+
+				// data.append(company.getSymbolNumber()).append(DELIMITER);
+				// data.append(company.getName()).append(DELIMITER);
+				data.append(company.getNoOfTransaction()).append(DELIMITER);
+				data.append(company.getTotalSharesTraded()).append(DELIMITER);
+				data.append(company.getVolume()).append(DELIMITER);
+				data.append(company.getHigh()).append(DELIMITER);
+				data.append(company.getLow()).append(DELIMITER);
+				data.append(company.getClosingPrice()).append("\n");
+				// data.append(company.getPreviousClosingPrice()).append(DELIMITER);
+				// data.append(company.getDifference()).append("\n");
+				fw.append(data.toString());
+			}
 
 		} catch (IOException e) {
 			throw new FileCreationException("cannot create a file");
 		} finally {
-			if(fw != null) {
+			if (fw != null) {
 				try {
 					fw.flush();
-			
+
+					fw.close();
+				} catch (IOException e) {
+					throw new FileCreationException("cannot create a file");
+				}
+			}
+		}
+
+	}
+
+	public void writeCompanyOpeningPriceToCsvFile(
+			Map<Date, Double> companiesDatas, File outputFile,
+			boolean dateInMilliSecond, boolean append) {
+
+		Writer fw = null;
+		try {
+
+			// outputStream = new FileOutputStream(outputFile);
+
+			fw = new FileWriter(outputFile, append);
+
+			if (!append) {
+				String headerLine = NEPSE_OPENING_PRICE_COMPANY_HEADERS + "\n";
+				fw.append(headerLine);
+			}
+
+			for (Date key : companiesDatas.keySet()) {
+
+				Double open = companiesDatas.get(key);
+
+				StringBuilder data = new StringBuilder();
+				if (dateInMilliSecond) {
+					data.append(key).append(DELIMITER);
+				} else {
+					data.append(df.format(key)).append(DELIMITER);
+				}
+
+				data.append(open).append("\n");
+				fw.append(data.toString());
+			}
+
+		} catch (IOException e) {
+			throw new FileCreationException("cannot create a file");
+		} finally {
+			if (fw != null) {
+				try {
+					fw.flush();
+
 					fw.close();
 				} catch (IOException e) {
 					throw new FileCreationException("cannot create a file");
@@ -172,35 +227,36 @@ public class CsvWriter {
 
 	private File createNewOutputFileforArchived(String location,
 			String fileName, String requestedDate) throws IOException {
-		
+
 		String outDir = location;
 
 		String outFileName = fileName;
 
-		
 		String fileNameWithTimestamp = fileName.substring(0,
 				fileName.length() - 4);
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		String timestamp = dateFormat.format(new Date(System.currentTimeMillis()));
+		String timestamp = dateFormat.format(new Date(System
+				.currentTimeMillis()));
 
-		outFileName = fileNameWithTimestamp +"for-"+ requestedDate +"createdOn-" + timestamp + ".csv";
+		outFileName = fileNameWithTimestamp + "for-" + requestedDate
+				+ "createdOn-" + timestamp + ".csv";
 
 		File file = new File(outDir, File.separatorChar + outFileName);
 
 		File directories = new File(outDir);
-		if(!directories.exists()){
-		
+		if (!directories.exists()) {
+
 			directories.mkdirs();
 		}
-		
+
 		file.createNewFile();
 
 		return file;
 	}
 
-
-	private File createNewOutputFile(String location, String fileName) throws IOException {
+	private File createNewOutputFile(String location, String fileName)
+			throws IOException {
 		String outDir = location;
 
 		String outFileName = fileName;
@@ -210,11 +266,11 @@ public class CsvWriter {
 		File file = new File(outDir, File.separatorChar + outFileName);
 
 		File directories = new File(outDir);
-		if(!directories.exists()){
-		
+		if (!directories.exists()) {
+
 			directories.mkdirs();
 		}
-		
+
 		file.createNewFile();
 
 		return file;
