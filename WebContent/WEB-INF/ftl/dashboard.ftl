@@ -519,6 +519,15 @@
                         <!-- /.panel-body -->
                     </div>
                     
+                    <div class="panel panel-default">
+                
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="exponentialMovingAverage-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    
                     <!-- /.panel -->
                     
                     <!-- /.panel -->

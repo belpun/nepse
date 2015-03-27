@@ -68,7 +68,35 @@ $(function() {
         			  },
         			  
         			  title : {
-        				  text : 'Simple Moving Average with 30 days'
+        				  text : 'Simple Moving Average(SMA) with 30 days'
+        			  },
+        			  
+        			  series : [{
+        				  type: 'areaspline',
+        				  name : 'rsi',
+        				  data : data,
+        				  tooltip: {
+        					  valueDecimals: 2
+        				  }
+        			  }]
+        		  });
+        	  });
+          });
+          
+          $(function () {
+        	  $.getJSON('http://localhost:8080/nepseData/web/company/' + companySymbol + '/exponentialMovingAverage', function (data) {
+        		  
+        		  // create the chart
+        		  $('#exponentialMovingAverage-chart').highcharts('StockChart', {
+        			  
+        			  
+        			  
+        			  rangeSelector : {
+        				  selected : 1
+        			  },
+        			  
+        			  title : {
+        				  text : 'Exponential Moving Average(EMA) with 30 days'
         			  },
         			  
         			  series : [{
