@@ -20,13 +20,13 @@ public class Main {
 		
 		
 		NepseDataExtractorFromWeb extractor =new NepseDataExtractorFromWeb();
-		Map<Date, CompanyData> extractArchivedDataForCompany = extractor.extractArchivedDataForCompany("MEGA", "2012-09-14", "2013-10-14");
+//		Map<Date, CompanyData> extractArchivedDataForCompany = extractor.extractArchivedDataForCompany("MEGA", "2012-09-14", "2013-10-14");
 		
-		File file = new File("src\\main\\resources\\companyData-MEGAtest.csv");
-		writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany, file, false, false);
+//		File file = new File("src\\main\\resources\\companyData-MEGAtest.csv");
+//		writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany, file, false, false);
 		
-		Map<Date, CompanyData> extractArchivedDataForCompany2 = extractor.extractArchivedDataForCompany("MEGA", "2013-09-14", "2014-10-14");
-		writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany2, file, false, true);
+//		Map<Date, CompanyData> extractArchivedDataForCompany2 = extractor.extractArchivedDataForCompany("MEGA", "2013-09-14", "2014-10-14");
+//		writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany2, file, false, true);
 		
 		System.out.println("stop");
 //		NepseArchiveDataInitializer init = new NepseArchiveDataInitializer();

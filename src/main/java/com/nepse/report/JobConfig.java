@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ImportResource;
 		"classpath:job/writeArchivedDataFromWebToCsvJob.xml",
 		"classpath:job/UpdateCompanyToCsv.xml",
 		"classpath:job/writeOpeningPriceFromWebToCsvJob.xml",
+		"classpath:job/writeOpeningPriceFromFileToDbJob.xml",
 	})
 public class JobConfig {
 

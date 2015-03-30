@@ -7,8 +7,8 @@
 	http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
  
-  <batch:job id="writeOpeningPriceFromFileToDbJob">
-	<batch:step id="writeOpeningPriceFromFileToDbStep1">
+  <batch:job id="writeOpeningPriceFromWebToCsvJob">
+	<batch:step id="writeOpeningPriceFromWebToCsvJobStep1">
 	  <batch:tasklet ref="writeOpeningPriceToFileFromWebTasklet"/>
 	</batch:step>
   </batch:job>

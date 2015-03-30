@@ -8,14 +8,18 @@
 	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
  
   <bean id="companyData" class="com.nepse.domain.CompanyData" scope="prototype" />
-
-	<batch:step id="writeOpeningPriceFromFileToDbStep">
-	  <batch:tasklet>
-		<batch:chunk reader="openingPricesMultiResourceReader" writer="companyDataWriter"
-			commit-interval="10">
-		</batch:chunk>
-	  </batch:tasklet>
-	</batch:step>
+	<batch:job id = "writeOpeningPriceFromFileToDbJob">
+		<batch:step id="writeOpeningPriceFromFileToDbStep">
+		  <batch:tasklet>
+			<batch:chunk reader="openingPricesMultiResourceReader" writer="companyDataWriter"
+				commit-interval="10" skip-limit="100000">
+				
+				 <batch:skippable-exception-classes>
+				  	<batch:include class="com.nepse.exception.CompanyDataNotFound"/>
+        		 </batch:skippable-exception-classes>
+			</batch:chunk>
+		  </batch:tasklet>
+		</batch:step>
 	
   </batch:job>
   
@@ -33,7 +37,7 @@
 		<property name="lineTokenizer">
 		    <bean 
                     class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
-				<property name="names" value="Date,Opening Price" />
+				<property name="names" value="Date,Open" />
 		    </bean>
 		</property>
 		<property name="fieldSetMapper" ref="companyOpeningPriceDataMapper"/>
@@ -42,7 +46,7 @@
   </bean>
   
   <bean id="companyOpeningPriceDataMapper" class="com.nepse.loader.CompanyOpeningPriceDataMapper">
-		<property name="reader" value="#{multiResourceReader}" />
+		<property name="reader" value="#{openingPricesMultiResourceReader}" />
 <!-- 		<property name="resource" value="#{stepExecutionContext['fileName']}" /> -->
 	</bean>
  

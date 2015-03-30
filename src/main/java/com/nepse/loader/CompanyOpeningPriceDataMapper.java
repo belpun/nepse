@@ -14,6 +14,7 @@ import org.springframework.validation.BindException;
 import com.nepse.dao.ICompanyRepository;
 import com.nepse.dao.IGenericRepository;
 import com.nepse.domain.CompanyData;
+import com.nepse.exception.CompanyDataNotFound;
 
 public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData>{
 	
@@ -37,17 +38,18 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 		
 		String date = fieldSet.readString("Date");
 		
-		String closingPrice = fieldSet.readString("Opening Price");
+		String closingPrice = fieldSet.readString("Open");
 
 		Date closingPriceDate;
 		try {
-			closingPriceDate = sdf.parse(closingPrice);
+			closingPriceDate = sdf.parse(date);
 			CompanyData companyData = companyRepository.getCompanyData(companySymbol, closingPriceDate);
 			
 			if(companyData != null) {
+				companyData.setOpenPrice(closingPrice);
 				return companyData;
 			} else {
-				throw new RuntimeException("Cannot find the Company");
+				throw new CompanyDataNotFound("Company Data not found for " + companySymbol + " for date " + closingPriceDate);
 			}
 		
 		} catch (ParseException e) {
