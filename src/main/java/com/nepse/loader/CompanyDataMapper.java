@@ -18,7 +18,6 @@ public class CompanyDataMapper implements FieldSetMapper<CompanyDataForm>{
 		String companySymbol = partFileName.split("\\.")[0];
 		System.out.println(companySymbol);
 		
-		\
 		String date = fieldSet.readString("Date");
 		String noOfTransaction = fieldSet.readString("No.of Transaction");
 		String totalShares = fieldSet.readString("Total Share");
