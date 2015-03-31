@@ -70,6 +70,37 @@ public class GenericRepository implements IGenericRepository {
 			}
 		}
 	}
+	
+	@Override
+	@Transactional
+	public <E> void update(E entity) {
+
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+
+			session.update(entity);
+
+			// Committing the change in the database.
+			session.flush();
+			tx.commit();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+
+			// Rolling back the changes to make the data consistent in case of
+			// any failure
+			// in between multiple database write operations.
+			tx.rollback();
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+	}
 
 	@SuppressWarnings("finally")
 	@Override

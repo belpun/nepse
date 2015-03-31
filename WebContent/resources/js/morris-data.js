@@ -1,4 +1,41 @@
+
 $(function() {
+	
+          $(function () {
+        	    $.getJSON('http://localhost:8080/nepseData/web/company/'+ companySymbol + '/candleStickChart', function (data) {
+
+        	        // create the chart
+        	        $('#candle-stick-chart').highcharts('StockChart', {
+
+
+        	            rangeSelector : {
+        	                selected : 1
+        	            },
+
+        	            title : {
+        	                text : 'Candle Stick Chart'
+        	            },
+
+        	            series : [{
+        	                type : 'candlestick',
+        	                name : 'AAPL Stock Price',
+        	                data : data,
+        	                dataGrouping : {
+        	                    units : [
+        	                        [
+        	                            'week', // unit name
+        	                            [1] // allowed multiples
+        	                        ], [
+        	                            'month',
+        	                            [1, 2, 3, 4, 6]
+        	                        ]
+        	                    ]
+        	                }
+        	            }]
+        	        });
+        	    });
+        	});
+
 	
           $(function () {
         	    $.getJSON('http://localhost:8080/nepseData/web/company/'+ companySymbol + '/companyClosingPrice', function (data) {
@@ -110,5 +147,6 @@ $(function() {
         		  });
         	  });
           });
-                    
+          
 });
+                    

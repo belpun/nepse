@@ -491,6 +491,15 @@
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-8">
+                	<div class="panel panel-default">
+                
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="candle-stick-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                
                     <div class="panel panel-default">
                 
                         <!-- /.panel-heading -->

@@ -58,7 +58,7 @@ public class CompanyRepository extends GenericRepository implements ICompanyRepo
 
 //			session.save(entity);
 			
-			String hql = "FROM CompanyData c where c.symbol = :symbol and c.date = :date";
+			String hql = "FROM CompanyData c where c.company.symbol = :symbol and c.date = :date";
 			Query query = session.createQuery(hql);
 			query.setParameter("symbol", symbol);
 			query.setDate("date", date);

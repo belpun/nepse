@@ -39,7 +39,7 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 		String date = fieldSet.readString("Date");
 		
 		String closingPrice = fieldSet.readString("Open");
-
+		
 		Date closingPriceDate;
 		try {
 			closingPriceDate = sdf.parse(date);

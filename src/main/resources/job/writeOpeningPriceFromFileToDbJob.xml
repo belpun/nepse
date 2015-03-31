@@ -11,18 +11,27 @@
 	<batch:job id = "writeOpeningPriceFromFileToDbJob">
 		<batch:step id="writeOpeningPriceFromFileToDbStep">
 		  <batch:tasklet>
-			<batch:chunk reader="openingPricesMultiResourceReader" writer="companyDataWriter"
-				commit-interval="10" skip-limit="100000">
+			<batch:chunk reader="openingPricesMultiResourceReader" writer="companyDataWriterWithModel"
+				commit-interval="10" skip-policy="alwaysSkipPolicy">
 				
-				 <batch:skippable-exception-classes>
-				  	<batch:include class="com.nepse.exception.CompanyDataNotFound"/>
-        		 </batch:skippable-exception-classes>
+<!-- 				 <batch:skippable-exception-classes> -->
+<!-- 				  	<batch:include class="com.nepse.exception.CompanyDataNotFound"/> -->
+<!--         		 </batch:skippable-exception-classes> -->
 			</batch:chunk>
 		  </batch:tasklet>
+		  
+<!-- 		  <listeners> -->
+<!--           	  <listener ref="openingPriceSkipListener"/> -->
+<!--           </listeners> -->
 		</batch:step>
 	
   </batch:job>
   
+  
+  <bean id="companyDataWriterWithModel" class="com.nepse.loader.CompanyDataWriterWithModel"/>
+  
+  <bean id="alwaysSkipPolicy" class="org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy"/>
+   
 	<bean id="openingPricesMultiResourceReader"
 		class=" org.springframework.batch.item.file.MultiResourceItemReader">
 		<property name="resources" value="classpath:openingPrice/openingPriceCompanyData*.csv" />

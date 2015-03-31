@@ -6,4 +6,6 @@ public interface IGenericRepository {
 	public <E> void save(E entity);
 	
 	public <E> E findById(Class<E> objectClazz, Serializable key);
+
+	public <E> void update(E entity);
 }

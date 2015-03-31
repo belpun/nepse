@@ -88,8 +88,8 @@ public class JDBCCompanyRepository {
       	   Map<Long, CompanyData> companyInfo = new TreeMap<Long, CompanyData>();
              while (rs.next()) {
           	   Date date = new Date(rs.getDate("date").getTime());
-          	   String open = rs.getString("open");
-          	   String close = rs.getString("close");
+          	   String open = rs.getString("openPrice");
+          	   String close = rs.getString("closingPrice");
           	   String high = rs.getString("high");
           	   String low = rs.getString("low");
           	   
@@ -109,5 +109,4 @@ public class JDBCCompanyRepository {
      
 		return jdbcTemplate.query(GET_COMPANYDATA,  new Object[]{symbol}, extractor);
 	}
-
 }
