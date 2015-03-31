@@ -9,7 +9,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -50,8 +54,8 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 
 		Map<String, String> companySymbol = companyRepository
 				.getCompanySymbol();
-		// Map<String, String> companySymbol = new HashMap<String, String>();
-		// companySymbol.put("ADBL", "for test");
+//		 Map<String, String> companySymbol = new HashMap<String, String>();
+//		 companySymbol.put("MNBBLP", "for test");
 
 		for (String symbol : companySymbol.keySet()) {
 
@@ -65,7 +69,7 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 
 				// check the last date and get latest and append in sorted order
 				
-//				skippedWriting = appendToExistingFile(file, symbol);
+				skippedWriting = appendToExistingFile(file, symbol);
 			} else {
 				// create a new file with the name
 
@@ -104,7 +108,7 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 	}
 
 	public boolean appendToExistingFile(File file, String symbol) {
-		boolean skippedWriting = true;
+		boolean skippedWriting = false;
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
@@ -113,36 +117,38 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 
 			String line = null;
 			String lastLine = null;
+			br.readLine();
 			while ((line = br.readLine()) != null) {
 				lastLine = line;
 			}
-
-			String[] companyData = lastLine.split(",");
-
-			Date latestDate = dateFormat.parse(companyData[0]);
+			DateTime latestDateTime = null;
+			Date latestDate = null;
 			
-
-			DateTime latestDateTime = new DateTime(latestDate);
+			if(lastLine != null) {
+				String[] companyData = lastLine.split(",");
+				latestDate = dateFormat.parse(companyData[0]);
+				latestDateTime = new DateTime(latestDate);
+			} else {
+				latestDateTime = new DateTime().minusYears(10);
+			}
 			
-			LocalDate yesterday = DateTime.now().minusDays(1).toLocalDate();
-			LocalDate lastestDate = latestDateTime.toLocalDate();
-			if(!yesterday.isEqual(lastestDate) && latestDateTime.isBeforeNow()) {
-								
-				latestDateTime = latestDateTime.plusDays(1);
-	
-				String latestDataAvaiDate = dateFormat.format(latestDateTime
-						.toDate());
-	
-				DateTime currentDate = new DateTime();
-				String toadyDate = dateFormat.format(currentDate.toDate());
+			Map<Date, Double> extractOpeningDataForCompany = extractor.extractOpenData(symbol);
+			
+			Map<Date, Double> dataToWrite = new TreeMap<Date, Double>();
+			
+			for(Entry<Date, Double> entry : extractOpeningDataForCompany.entrySet()) {
 				
-				Map<Date, CompanyData> extractArchivedDataForCompany = extractor.extractArchivedDataForCompanyAll(
-						symbol, latestDataAvaiDate, toadyDate);
-	
-				if(extractArchivedDataForCompany != null && !extractArchivedDataForCompany.isEmpty()) {
-					skippedWriting = false;
-					writer.writeDataPerCompanyToCsvFile(extractArchivedDataForCompany, file, false, true);
+				DateTime keyDate = new DateTime(entry.getKey());
+				if(latestDateTime.isBefore(keyDate)) {
+					dataToWrite.put(entry.getKey(), entry.getValue());
+				} else {
+					continue;
 				}
+				
+			}
+			
+			if(!dataToWrite.isEmpty()) {
+				writer.writeCompanyOpeningPriceToCsvFile(extractOpeningDataForCompany, file, false, false);
 			}
 
 		} catch (FileNotFoundException e) {
