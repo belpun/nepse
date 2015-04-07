@@ -1,5 +1,7 @@
 package com.nepse.job;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -14,7 +16,10 @@ import com.nepse.report.JobConfig;
 
 public class JobLauncherApp {
 
+	Logger logger = LoggerFactory.getLogger(JobLauncherApp.class);
+	
 	public void launch(String jobName) {
+		
 		ApplicationContext context = new AnnotationConfigApplicationContext(DefaultDatabaseConfig.class, JobConfig.class, JDBCCompanyRepository.class);
 		 
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
@@ -29,7 +34,7 @@ public class JobLauncherApp {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error occured" + e.getMessage());
 		}
 //	 
 		System.out.println("Done");

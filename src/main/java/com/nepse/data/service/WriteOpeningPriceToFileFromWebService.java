@@ -1,4 +1,4 @@
-package com.nepse.loader.initilizer;
+package com.nepse.data.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,55 +9,36 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nepse.dao.JDBCCompanyRepository;
 import com.nepse.data.NepseDataExtractorFromWeb;
-import com.nepse.domain.CompanyData;
 import com.nepse.writer.CsvWriter;
 
-public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
+public class WriteOpeningPriceToFileFromWebService {
+	
 	private final String FILE_LOCATION = "src" + File.separator + "main"
 			+ File.separator + "resources" + File.separator + "openingPrice";
 	private final String PREFIX = "openingPriceCompanyData-";
 	private final String SUFIX = ".csv";
-
-	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-	private final NepseDataExtractorFromWeb extractor = new NepseDataExtractorFromWeb();
-
-	private final CsvWriter writer = new CsvWriter();
-
-	@Autowired
-	public JDBCCompanyRepository companyRepository;
-
-//	public static void main(String[] args) throws Exception {
-//		new WriteArchiveDataFromWebTasklet().execute();
-//	}
-
 	
-	@Override
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
-
-		Map<String, String> companySymbol = companyRepository
-				.getCompanySymbol();
-//		 Map<String, String> companySymbol = new HashMap<String, String>();
-//		 companySymbol.put("MNBBLP", "for test");
-
-		for (String symbol : companySymbol.keySet()) {
+	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Autowired
+	private final NepseDataExtractorFromWeb extractor = null;
+	
+	@Autowired
+	private final CsvWriter writer = null;
+	
+	
+	public void update(Set<String> symbols) throws IOException, InterruptedException {
+		
+		for (String symbol : symbols) {
 
 			System.out.println("processing company for Opening File " + symbol);
 			String fileName = PREFIX + symbol + SUFIX;
@@ -66,31 +47,21 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 			File file = new File(fullPath);
 			boolean skippedWriting = false;
 			if (file.exists()) {
-
 				// check the last date and get latest and append in sorted order
-				
 				skippedWriting = appendToExistingFile(file, symbol);
 			} else {
 				// create a new file with the name
-
 				file.createNewFile();
 				writeInNewFile(file, symbol);
-
 				// get the data
 			}
 			
-			if(!skippedWriting) {
+			if(!skippedWriting && symbols.size() > 1) {
 				Thread.currentThread().sleep(5000);
 			}
-
-
 		}
-
-		System.out.println("stop");
-
-		return RepeatStatus.FINISHED;
 	}
-
+	
 	public void writeInNewFile(File file, String symbol) {
 
 		Map<Date, Double> extractOpeningDataForCompany = extractor.extractOpenData(symbol);
@@ -98,15 +69,7 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 		writer.writeCompanyOpeningPriceToCsvFile(extractOpeningDataForCompany, file, false, false);
 
 	}
-
-	public JDBCCompanyRepository getCompanyRepository() {
-		return companyRepository;
-	}
-
-	public void setCompanyRepository(JDBCCompanyRepository companyRepository) {
-		this.companyRepository = companyRepository;
-	}
-
+	
 	public boolean appendToExistingFile(File file, String symbol) {
 		boolean skippedWriting = false;
 		FileReader fr = null;

@@ -1,7 +1,12 @@
 package com.nepse.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+
+import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.data.service.WriteOpeningPriceToFileFromWebService;
+import com.nepse.writer.CsvWriter;
 
 @Configuration
 @ImportResource("classpath:dataSource.xml")
@@ -20,5 +25,20 @@ public class DefaultConfig {
 //                templateEngine.setSharedVariables(sharedVariables);
 //		return templateEngine;
 //	}
+	
+	@Bean
+	public NepseDataExtractorFromWeb nepseDataExtractorFromWeb() {
+		return new NepseDataExtractorFromWeb();
+	}
+	
+	@Bean
+	public CsvWriter csvWriter() {
+		return new CsvWriter();
+	}
+	
+	@Bean
+	public WriteOpeningPriceToFileFromWebService writeOpeningPriceToFileFromWebService(){
+		return new WriteOpeningPriceToFileFromWebService();
+	}
 
 }

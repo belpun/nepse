@@ -12,7 +12,7 @@
 		<batch:step id="writeOpeningPriceFromFileToDbStep">
 		  <batch:tasklet>
 			<batch:chunk reader="openingPricesMultiResourceReader" writer="companyDataWriterWithModel"
-				commit-interval="10" skip-policy="alwaysSkipPolicy">
+				commit-interval="10" skip-policy="companyNotFoundSkipPolicy">
 				
 <!-- 				 <batch:skippable-exception-classes> -->
 <!-- 				  	<batch:include class="com.nepse.exception.CompanyDataNotFound"/> -->
@@ -30,7 +30,9 @@
   
   <bean id="companyDataWriterWithModel" class="com.nepse.loader.CompanyDataWriterWithModel"/>
   
-  <bean id="alwaysSkipPolicy" class="org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy"/>
+  <bean id="companyNotFoundSkipPolicy" class="com.nepse.batch.skip.policy.CompanyNotFoundSkipPolicy">
+  	<property name="skipLimit" value="100"/>
+  </bean>
    
 	<bean id="openingPricesMultiResourceReader"
 		class=" org.springframework.batch.item.file.MultiResourceItemReader">

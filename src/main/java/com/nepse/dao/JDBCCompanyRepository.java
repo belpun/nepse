@@ -18,6 +18,7 @@ import com.nepse.domain.CompanyData;
 @Repository
 public class JDBCCompanyRepository {
 	 private static final Logger LOGGER = LoggerFactory.getLogger(JDBCCompanyRepository.class);
+	 
 	 private JdbcTemplate jdbcTemplate;
 	
 	 private static String GET_COMPANY_CLOSING_PRICE = "select data.date as dd, data.closingPrice as price from CompanyData data inner join Company com "
