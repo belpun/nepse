@@ -5,7 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import com.nepse.data.NepseDataExtractorFromWeb;
+import com.nepse.data.service.IWriteArchivedDataToFileFromWebService;
+import com.nepse.data.service.WriteArchivedDataToFileFromWebService;
 import com.nepse.data.service.WriteOpeningPriceToFileFromWebService;
+import com.nepse.service.data.CompanyDataUpdater;
+import com.nepse.service.data.ICompanyDataUpdater;
+import com.nepse.utils.FileNameUtils;
 import com.nepse.writer.CsvWriter;
 
 @Configuration
@@ -39,6 +44,21 @@ public class DefaultConfig {
 	@Bean
 	public WriteOpeningPriceToFileFromWebService writeOpeningPriceToFileFromWebService(){
 		return new WriteOpeningPriceToFileFromWebService();
+	}
+	
+	@Bean
+	public ICompanyDataUpdater companyDataUpdater() {
+		return new CompanyDataUpdater();
+	}
+	
+	@Bean
+	public IWriteArchivedDataToFileFromWebService writeArchivedDataToFileFromWebService() {
+		return new WriteArchivedDataToFileFromWebService();
+	}
+	
+	@Bean
+	public FileNameUtils fileNameUtils() {
+		return new FileNameUtils();
 	}
 
 }

@@ -18,6 +18,7 @@ import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.domain.CompanyData;
 import com.nepse.writer.CsvWriter;
 
+@Deprecated
 public class CopyOfWriteArchiveDataFromWebTasklet implements Tasklet{
 	private final String FILE_LOCATION = "src" + File.separator + "main"
 			+ File.separator + "resources";
