@@ -9,14 +9,14 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nepse.dao.JDBCCompanyRepository;
-import com.nepse.data.service.IWriteArchivedDataToFileFromWebService;
+import com.nepse.data.service.IArchivedDataService;
 
 public class WriteArchiveDataFromWebTasklet implements Tasklet{
 	@Autowired
 	public JDBCCompanyRepository companyRepository;
 	
 	@Autowired
-	public IWriteArchivedDataToFileFromWebService writeArchivedDataToFileFromWebService;
+	public IArchivedDataService writeArchivedDataToFileFromWebService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution,
@@ -31,7 +31,7 @@ public class WriteArchiveDataFromWebTasklet implements Tasklet{
 
 			System.out.println("processing company " + symbol);
 			
-			boolean skippedWriting = writeArchivedDataToFileFromWebService.update(symbol);
+			boolean skippedWriting = writeArchivedDataToFileFromWebService.updateArchievedDataFromWebToFile(symbol);
 			
 			if(!skippedWriting) {
 				Thread.currentThread().sleep(20000);

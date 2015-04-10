@@ -1,42 +1,36 @@
 package com.nepse.service.data;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.nepse.data.service.IWriteArchivedDataToFileFromWebService;
+import com.nepse.data.service.IArchivedDataService;
+import com.nepse.data.service.IOpeningPriceService;
 import com.nepse.exception.CompanyDataUpdateException;
 
 public class CompanyDataUpdater implements ICompanyDataUpdater{
 	
-	@Qualifier("jobLauncher")
-	private JobLauncher jobLauncher;
-	
-	@Qualifier("writeOpeningPriceFromFileToDbJob")
-	private Job job;
+	@Autowired
+	private final IArchivedDataService archievedDataService = null;
 	
 	@Autowired
-	private IWriteArchivedDataToFileFromWebService writeArchivedDataToFileFromWebService;
+	private final IOpeningPriceService openingPriceService = null;
 	
 	@Override
 	public void updateLatestData(String symbol) throws CompanyDataUpdateException{
-		
-		writeArchivedDataToFileFromWebService.update(symbol);
-		
+		updateCompanyDetailsPrice(symbol);
+		updateOpeningPrice(symbol);
 	}
 	
-	public boolean updateCompanyDetailsPrice(String symbol){
-		// get the latest data from csv
-	
-		
-		return false;
-		
+	private void updateCompanyDetailsPrice(String symbol){
+			archievedDataService.updateArchievedDataFromWebToFile(symbol);
+			archievedDataService.updateDbFromFile(symbol);
 	}
 	
-	
-	public boolean updateOpeningPrice(String symbol){
-		return false;
+	private void updateOpeningPrice(String symbol){
+			
+		openingPriceService.updateOpeningPriceFromWebToFile(symbol);
+		openingPriceService.updateOpeningPriceFromFileToDb(symbol);
 	}
 
 }
+
+

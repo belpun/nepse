@@ -1,7 +1,5 @@
 package com.nepse.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,14 +17,42 @@ public class DataUpdaterController {
 	private ICompanyDataUpdater companyDataUpdater;
 
 	@RequestMapping(value = "/company/{companySymbol}/update", method = RequestMethod.GET)
-	public @ResponseBody List<Object[]> companyClosingPrice(
+	public @ResponseBody PriceUpdateResult updateCompanyData(
 			@PathVariable String companySymbol) {
-
+		PriceUpdateResult result = new PriceUpdateResult(true, "");
 		try {
 			companyDataUpdater.updateLatestData(companySymbol);
 		} catch (CompanyDataUpdateException e) {
+			result.setSuccessful(false);
+			result.setErrorMessage("Internal error in updating the company data");
 		}
-		return null;
+		return result;
+	}
+}
+
+class PriceUpdateResult {
+	private boolean successful;
+	private String errorMessage;
+	public boolean isSuccessful() {
+		return successful;
+	}
+	
+	public PriceUpdateResult(boolean successful, String errorMessage) {
+		super();
+		this.successful = successful;
+		this.errorMessage = errorMessage;
 	}
 
+	public void setSuccessful(boolean successful) {
+		this.successful = successful;
+	}
+	
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	
 }

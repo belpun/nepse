@@ -15,23 +15,30 @@ public class FileNameUtils {
 	@Qualifier("customerPropertiesRepository")
 	private final IPropertiesRepository customerPropertiesRepository = null;
 	
-	private static final String FILE_LOCATION = "src" + File.separator + "main"
+	private static final String ARCHIEVED_FILE_LOCATION = "src" + File.separator + "main"
 			+ File.separator + "resources";
-	private static final String PREFIX = "companyData-";
-	private static final String SUFIX = ".csv";
+	private static final String ARCHIEVED_PREFIX = "companyData-";
+	private static final String ARCHIEVED_SUFIX = ".csv";
 
+	
+	private final String OPENING_FILE_LOCATION = "src" + File.separator + "main"
+			+ File.separator + "resources" + File.separator + "openingPrice";
+	private final String OPENING_PREFIX = "openingPriceCompanyData-";
+	private final String OPENING_SUFIX = ".csv";
 	
 	public String archivedFileName(String companySymbol){
 		
-		String fileName = PREFIX + companySymbol + SUFIX;
+		String fileName = ARCHIEVED_PREFIX + companySymbol + ARCHIEVED_SUFIX;
 
-		return customerPropertiesRepository.get("archivedFile.url", ".") + File.separator + FILE_LOCATION + File.separator + fileName;
+		return customerPropertiesRepository.get("archivedFile.url", ".") + File.separator + ARCHIEVED_FILE_LOCATION + File.separator + fileName;
 	}
 	
-	public String openingPriceFileName(String companySymbol) {
+	
+	public String openingFileName(String companySymbol){
 		
-		return null;
+		String fileName = OPENING_PREFIX + companySymbol + OPENING_SUFIX;
+
+		return customerPropertiesRepository.get("openingFile.url", ".") + File.separator + OPENING_FILE_LOCATION + File.separator + fileName;
 	}
-	
 	
 }

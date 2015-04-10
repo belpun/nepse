@@ -29,6 +29,8 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 	private IGenericRepository genericRepository;
 	
 	private MultiResourceItemReader reader;
+	
+	private String symbol;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	@Override
@@ -78,6 +80,14 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 
 	public void setCompanyRepository(ICompanyRepository companyRepository) {
 		this.companyRepository = companyRepository;
+	}
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
 	}
 	
 }

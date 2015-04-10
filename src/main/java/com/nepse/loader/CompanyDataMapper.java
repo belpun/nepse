@@ -1,5 +1,7 @@
 package com.nepse.loader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
@@ -7,15 +9,30 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.BindException;
 
 public class CompanyDataMapper implements FieldSetMapper<CompanyDataForm>{
-	
+	private static final Logger logger = LoggerFactory.getLogger(CompanyDataMapper.class);
+	private String symbol = null;
+
 	private MultiResourceItemReader reader;
 
 	@Override
 	public CompanyDataForm mapFieldSet(FieldSet fieldSet) throws BindException {
-		Resource currentResource = reader.getCurrentResource();
-		String filename = currentResource.getFilename();
-		String partFileName = filename.split("-")[1];
-		String companySymbol = partFileName.split("\\.")[0];
+		
+		String companySymbol = null;
+		if (reader != null) {
+			Resource currentResource = reader.getCurrentResource();
+			String filename = currentResource.getFilename();
+			String partFileName = filename.split("-")[1];
+			companySymbol = partFileName.split("\\.")[0];
+			
+		} else {
+			companySymbol = symbol;
+		}
+		
+		if (reader == null && symbol == null) {
+			String errorMsg = "company Symbol is not provided so this file cannot be saved";
+			logger.error(errorMsg);
+			throw new IllegalStateException(errorMsg);
+		}
 		System.out.println(companySymbol);
 		
 		String date = fieldSet.readString("Date");
@@ -35,6 +52,14 @@ public class CompanyDataMapper implements FieldSetMapper<CompanyDataForm>{
 
 	public void setReader(MultiResourceItemReader object) {
 		this.reader = object;
+	}
+	
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
 	}
 	
 }

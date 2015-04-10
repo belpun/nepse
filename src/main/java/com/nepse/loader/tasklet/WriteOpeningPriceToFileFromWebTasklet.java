@@ -9,12 +9,12 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nepse.dao.JDBCCompanyRepository;
-import com.nepse.data.service.WriteOpeningPriceToFileFromWebService;
+import com.nepse.data.service.OpeningPriceService;
 
 public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 	
 	@Autowired
-	private final WriteOpeningPriceToFileFromWebService writeOpeningPriceToFileFromWebService = null;
+	private final OpeningPriceService writeOpeningPriceToFileFromWebService = null;
 	
 	@Autowired
 	public JDBCCompanyRepository companyRepository;
@@ -26,8 +26,14 @@ public class WriteOpeningPriceToFileFromWebTasklet implements Tasklet{
 		Map<String, String> companySymbol = companyRepository
 				.getCompanySymbol();
 
-		writeOpeningPriceToFileFromWebService.update(companySymbol.keySet());
+		for(String symbol : companySymbol.keySet()) {
+			
+			boolean skippedWriting = writeOpeningPriceToFileFromWebService.updateOpeningPriceFromWebToFile(symbol);
 
+			if(!skippedWriting && companySymbol.size() > 1) {
+				Thread.currentThread().sleep(5000);
+			}
+		}
 		System.out.println("stop");
 
 		return RepeatStatus.FINISHED;

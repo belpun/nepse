@@ -8,24 +8,34 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 
 import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.domain.CompanyData;
 import com.nepse.exception.CompanyDataUpdateException;
+import com.nepse.loader.CompanyDataForm;
+import com.nepse.loader.CompanyDataMapper;
+import com.nepse.loader.CompanyDataWriter;
 import com.nepse.utils.FileNameUtils;
 import com.nepse.writer.CsvWriter;
 
-public class WriteArchivedDataToFileFromWebService implements IWriteArchivedDataToFileFromWebService{
+public class ArchivedDataService implements IArchivedDataService{
 
-	Logger logger = LoggerFactory.getLogger(WriteArchivedDataToFileFromWebService.class);
+	private final static Logger logger = LoggerFactory.getLogger(ArchivedDataService.class);
 	
 	@Autowired
 	private final CsvWriter writer = null;
@@ -36,10 +46,67 @@ public class WriteArchivedDataToFileFromWebService implements IWriteArchivedData
 	@Autowired
 	private final NepseDataExtractorFromWeb extractor = null;
 	
+	@Autowired
+	private final CompanyDataWriter companyDataWriter = null;
+	
 	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+	@Override
+	public void updateDbFromFile(String symbol) {
+		String filePath = fileNameUtils.archivedFileName(symbol);
+		File file = new File(filePath);
+		
+		if(file.exists()) {
+			
+			try{
+				FlatFileItemReader<CompanyDataForm> itemReader = new FlatFileItemReader<CompanyDataForm>();
+				
+				itemReader.setResource(new FileSystemResource(file));
+				
+				itemReader.setLinesToSkip(1);
+							
+				DefaultLineMapper<CompanyDataForm> lineMapper = new DefaultLineMapper<CompanyDataForm>();
+				
+				DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
+				delimitedLineTokenizer.setNames(new String[]{"Date","No.of Transaction","Total Share","Amount","Max.price","Min.price","Closing Price"});
+				
+				lineMapper.setLineTokenizer(delimitedLineTokenizer);
+				
+				CompanyDataMapper companyDataMapper = new CompanyDataMapper();
+				companyDataMapper.setSymbol(symbol);
+				lineMapper.setFieldSetMapper(companyDataMapper);
+				itemReader.setLineMapper(lineMapper);
+				itemReader.open(new ExecutionContext());
+				CompanyDataForm read = itemReader.read();
+				
+				List<CompanyDataForm> companies = new ArrayList<CompanyDataForm>();
+				
+				while (read != null) {
+					companies.add(read);
+					read = itemReader.read();
+				}
+				
+				if(!companies.isEmpty()) {
+				
+					companyDataWriter.write(companies);
+				}
+				
+			} catch(Exception e) {
+				String errorMsg = "error writing file to database for + " + symbol + " at location : " + filePath; 
+				logger.error(errorMsg);
+				throw new CompanyDataUpdateException(errorMsg, e);
+			}
+			
+		} else {
+			String errorMsg = "unable to find the file for + " + symbol + " at location : " + filePath; 
+			logger.error(errorMsg);
+			throw new CompanyDataUpdateException(errorMsg);
+		}
+	}
+	
 	
 	@Override
-	public boolean update(String symbol) {
+	public boolean updateArchievedDataFromWebToFile(String symbol) {
 		
 		String filePath = fileNameUtils.archivedFileName(symbol);
 		File file = new File(filePath);
@@ -64,6 +131,7 @@ public class WriteArchivedDataToFileFromWebService implements IWriteArchivedData
 			System.out.println(file.getAbsolutePath());
 			// get the data
 		}
+		
 		return skippedWriting;
 		
 	}
@@ -128,7 +196,9 @@ public class WriteArchivedDataToFileFromWebService implements IWriteArchivedData
 			logger.error(errorMsg);
 			throw new CompanyDataUpdateException(errorMsg, e);
 		} catch (ParseException e) {
-			throw new CompanyDataUpdateException(" ", e);
+			String errorMsg = "Could not parse the data while reading file for symbol : " + symbol; 
+			logger.error(errorMsg);
+			throw new CompanyDataUpdateException(errorMsg, e);
 			
 		} finally {
 			if(br!= null) {
