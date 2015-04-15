@@ -25,6 +25,8 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 
+import com.nepse.dao.ICompanyRepository;
+import com.nepse.dao.IGenericRepository;
 import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.domain.CompanyData;
 import com.nepse.exception.CompanyDataUpdateException;
@@ -34,110 +36,146 @@ import com.nepse.utils.FileNameUtils;
 import com.nepse.writer.CsvWriter;
 
 public class OpeningPriceService implements IOpeningPriceService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(OpeningPriceService.class);
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(OpeningPriceService.class);
 	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	
+
 	@Autowired
 	private final NepseDataExtractorFromWeb extractor = null;
-	
+
 	@Autowired
 	private final CsvWriter writer = null;
-	
+
 	@Autowired
 	private final FileNameUtils fileNameUtils = null;
-	
+
 	@Autowired
 	private final CompanyDataWriterWithModel companyDataWriterWithModel = null;
-	
+
+	@Autowired
+	private ICompanyRepository companyRepository;
+
+	@Autowired
+	private IGenericRepository genericRepository;
+
 	@Override
 	public void updateOpeningPriceFromFileToDb(String symbol) {
 		String filePath = fileNameUtils.openingFileName(symbol);
 		File file = new File(filePath);
-		
-		if(file.exists()) {
-			
-			try{
+
+		if (file.exists()) {
+
+			try {
 				FlatFileItemReader<CompanyData> itemReader = new FlatFileItemReader<CompanyData>();
-				
+
 				itemReader.setResource(new FileSystemResource(file));
-				
+
 				itemReader.setLinesToSkip(1);
-							
+
 				DefaultLineMapper<CompanyData> lineMapper = new DefaultLineMapper<CompanyData>();
-				
+
 				DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
-				delimitedLineTokenizer.setNames(new String[]{"Date","Open"});
-				
+				delimitedLineTokenizer
+						.setNames(new String[] { "Date", "Open" });
+
 				lineMapper.setLineTokenizer(delimitedLineTokenizer);
-				
+
 				CompanyOpeningPriceDataMapper companyDataMapper = new CompanyOpeningPriceDataMapper();
+
+				companyDataMapper.setCompanyRepository(companyRepository);
+
+				companyDataMapper.setGenericRepository(genericRepository);
+
 				companyDataMapper.setSymbol(symbol);
 				lineMapper.setFieldSetMapper(companyDataMapper);
 				itemReader.setLineMapper(lineMapper);
 				itemReader.open(new ExecutionContext());
-				CompanyData read = itemReader.read();
-				
-				List<CompanyData> companies = new ArrayList<CompanyData>();
-				
-				while (read != null) {
-					companies.add(read);
+
+				boolean skip = false;
+				CompanyData read = null;
+				try {
 					read = itemReader.read();
+
+				} catch (Exception ex) {
+					skip = true;
 				}
 
-				if(!companies.isEmpty()) {
-				
+				List<CompanyData> companies = new ArrayList<CompanyData>();
+
+				while (read != null || skip) {
+
+					skip = false;
+
+					if (read != null) {
+						companies.add(read);
+					}
+					try {
+
+						read = itemReader.read();
+
+					} catch (Exception ex) {
+						skip = true;
+					}
+				}
+
+				if (!companies.isEmpty()) {
+
 					companyDataWriterWithModel.write(companies);
 				}
-				
-			} catch(Exception e) {
-				String errorMsg = "error writing file to database for + " + symbol + " at location : " + filePath; 
+
+			} catch (Exception e) {
+				String errorMsg = "error updating database for + " + symbol
+						+ " at location : " + filePath;
 				logger.error(errorMsg);
 				throw new CompanyDataUpdateException(errorMsg, e);
 			}
-			
+
 		} else {
-			String errorMsg = "unable to find the file for + " + symbol + " at location : " + filePath; 
+			String errorMsg = "unable to find the file for + " + symbol
+					+ " at location : " + filePath;
 			logger.error(errorMsg);
 			throw new CompanyDataUpdateException(errorMsg);
 		}
-		
+
 	}
-	
+
 	@Override
 	public boolean updateOpeningPriceFromWebToFile(String symbol) {
 
-			System.out.println("processing company for Opening File " + symbol);
+		System.out.println("processing company for Opening File " + symbol);
 
-			String fullPath = fileNameUtils.openingFileName(symbol);
-			File file = new File(fullPath);
-			boolean skippedWriting = false;
-			if (file.exists()) {
-				// check the last date and get latest and append in sorted order
-				skippedWriting = appendToExistingFile(file, symbol);
-			} else {
-				// create a new file with the name
-				try {
-					file.createNewFile();
-				} catch (IOException e) {
-					String errorMsg = "error creating a file at :" + fullPath;
-					logger.error(errorMsg);
-					throw new CompanyDataUpdateException(errorMsg, e);
-				}
-				writeInNewFile(file, symbol);
+		String fullPath = fileNameUtils.openingFileName(symbol);
+		File file = new File(fullPath);
+		boolean skippedWriting = false;
+		if (file.exists()) {
+			// check the last date and get latest and append in sorted order
+			skippedWriting = appendToExistingFile(file, symbol);
+		} else {
+			// create a new file with the name
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				String errorMsg = "error creating a file at :" + fullPath;
+				logger.error(errorMsg);
+				throw new CompanyDataUpdateException(errorMsg, e);
 			}
-			return skippedWriting;
-			
+			writeInNewFile(file, symbol);
+		}
+		return skippedWriting;
+
 	}
-	
+
 	private void writeInNewFile(File file, String symbol) {
 
-		Map<Date, Double> extractOpeningDataForCompany = extractor.extractOpenData(symbol);
+		Map<Date, Double> extractOpeningDataForCompany = extractor
+				.extractOpenData(symbol);
 
-		writer.writeCompanyOpeningPriceToCsvFile(extractOpeningDataForCompany, file, false, false);
+		writer.writeCompanyOpeningPriceToCsvFile(extractOpeningDataForCompany,
+				file, false, false);
 
 	}
-	
+
 	private boolean appendToExistingFile(File file, String symbol) {
 		boolean skippedWriting = false;
 		FileReader fr = null;
@@ -154,32 +192,35 @@ public class OpeningPriceService implements IOpeningPriceService {
 			}
 			DateTime latestDateTime = null;
 			Date latestDate = null;
-			
-			if(lastLine != null) {
+
+			if (lastLine != null) {
 				String[] companyData = lastLine.split(",");
 				latestDate = dateFormat.parse(companyData[0]);
 				latestDateTime = new DateTime(latestDate);
 			} else {
 				latestDateTime = new DateTime().minusYears(10);
 			}
-			
-			Map<Date, Double> extractOpeningDataForCompany = extractor.extractOpenData(symbol);
-			
+
+			Map<Date, Double> extractOpeningDataForCompany = extractor
+					.extractOpenData(symbol);
+
 			Map<Date, Double> dataToWrite = new TreeMap<Date, Double>();
-			
-			for(Entry<Date, Double> entry : extractOpeningDataForCompany.entrySet()) {
-				
+
+			for (Entry<Date, Double> entry : extractOpeningDataForCompany
+					.entrySet()) {
+
 				DateTime keyDate = new DateTime(entry.getKey());
-				if(latestDateTime.isBefore(keyDate)) {
+				if (latestDateTime.isBefore(keyDate)) {
 					dataToWrite.put(entry.getKey(), entry.getValue());
 				} else {
 					continue;
 				}
-				
+
 			}
-			
-			if(!dataToWrite.isEmpty()) {
-				writer.writeCompanyOpeningPriceToCsvFile(extractOpeningDataForCompany, file, false, false);
+
+			if (!dataToWrite.isEmpty()) {
+				writer.writeCompanyOpeningPriceToCsvFile(
+						extractOpeningDataForCompany, file, false, false);
 			}
 
 		} catch (FileNotFoundException e) {
@@ -195,11 +236,12 @@ public class OpeningPriceService implements IOpeningPriceService {
 			logger.error(errorMsg);
 			throw new CompanyDataUpdateException(errorMsg, e);
 		} finally {
-			if(br!= null) {
+			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
-					String errorMsg =  "Error closing the resource file for:" + symbol;
+					String errorMsg = "Error closing the resource file for:"
+							+ symbol;
 					logger.error(errorMsg);
 					throw new CompanyDataUpdateException(errorMsg, e);
 				}

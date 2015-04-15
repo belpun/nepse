@@ -17,6 +17,7 @@ import com.nepse.dao.ICompanyRepository;
 import com.nepse.dao.IGenericRepository;
 import com.nepse.domain.CompanyData;
 import com.nepse.exception.CompanyDataNotFound;
+import com.nepse.exception.CompanyDataUpdateException;
 
 public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData>{
 	
@@ -33,12 +34,27 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 	private String symbol;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Override
 	public CompanyData mapFieldSet(FieldSet fieldSet) throws BindException {
-		Resource currentResource = reader.getCurrentResource();
-		String filename = currentResource.getFilename();
-		String partFileName = filename.split("-")[1];
-		String companySymbol = partFileName.split("\\.")[0];
+		String companySymbol = null;
+		
+		if (reader != null) {
+			Resource currentResource = reader.getCurrentResource();
+			String filename = currentResource.getFilename();
+			String partFileName = filename.split("-")[1];
+			companySymbol = partFileName.split("\\.")[0];
+			
+		} else {
+			companySymbol = symbol;
+		}
+		
+		if (reader == null && symbol == null) {
+			String errorMsg = "company Symbol is not provided so this file cannot be saved";
+			logger.error(errorMsg);
+			throw new IllegalStateException(errorMsg);
+		}
+		
 		logger.info("Reading the opening price file for {} ",companySymbol);
 		
 		String date = fieldSet.readString("Date");
@@ -56,8 +72,8 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 			} else {
 				String error = "Company Data not found for " + companySymbol + " for date " + closingPriceDate;
 				logger.error(error);
-				throw new CompanyDataNotFound(error);
-			}
+				throw new CompanyDataUpdateException(error);			
+				}
 		
 		} catch (ParseException e) {
 			String error = "Cannot parse the company Data for company:" + companySymbol + ". Provided date : " + date + " and openingPrice : " + openingPrice ;
@@ -88,6 +104,14 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
+	}
+	
+	public IGenericRepository getGenericRepository() {
+		return genericRepository;
+	}
+
+	public void setGenericRepository(IGenericRepository genericRepository) {
+		this.genericRepository = genericRepository;
 	}
 	
 }

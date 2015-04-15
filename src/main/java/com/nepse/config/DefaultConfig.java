@@ -8,10 +8,12 @@ import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.data.service.ArchivedDataService;
 import com.nepse.data.service.IArchivedDataService;
 import com.nepse.data.service.OpeningPriceService;
+import com.nepse.loader.CompanyDataWriter;
 import com.nepse.service.data.CompanyDataUpdater;
 import com.nepse.service.data.ICompanyDataUpdater;
 import com.nepse.utils.FileNameUtils;
 import com.nepse.writer.CsvWriter;
+import com.nepse.loader.CompanyDataWriterWithModel;
 
 @Configuration
 @ImportResource("classpath:dataSource.xml")
@@ -61,9 +63,14 @@ public class DefaultConfig {
 		return new FileNameUtils();
 	}
 	
-//	@Bean 
-//	public CompanyDataWriter companyDataWriter() {
-//		return new CompanyDataWriter();
-//	}
+	@Bean 
+	public CompanyDataWriter companyDataWriter() {
+		return new CompanyDataWriter();
+	}
+	
+	@Bean 
+	public CompanyDataWriterWithModel companyDataWriterWithModel() {
+		return new CompanyDataWriterWithModel();
+	}
 
 }
