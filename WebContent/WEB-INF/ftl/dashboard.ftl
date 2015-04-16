@@ -429,8 +429,8 @@
                                     <i class="fa fa-tasks fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">12</div>
-                                    <div>New Tasks!</div>
+                                    <div class="huge">${model.latestDataDate}</div>
+                                    <div>Latest Date</div>
                                 </div>
                             </div>
                         </div>

@@ -6,9 +6,11 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -30,10 +32,10 @@ public class JDBCCompanyRepository {
 	 private static String GET_COMPANYDATA = "select cd.date, cd.openPrice, cd.closingPrice, cd.high, cd.low from CompanyData cd "
 			 + " inner join Company c on c.id = cd.company_id "
 			 + " where c.symbol = ? ";
-	 
-	 
 	    
-	    
+	 private static String GET_LATEST_DATE = "select MAX(cd.date) from Company c inner join CompanyData cd "
+			 + " on c.id = cd.company_id "
+			 + " where c.symbol = ? ";
 	@Autowired
 	public JDBCCompanyRepository(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -46,8 +48,9 @@ public class JDBCCompanyRepository {
                public Map<Long, Double> extractData(ResultSet rs) throws SQLException {
             	   Map<Long, Double> closingPrices = new TreeMap<Long, Double>();
                    while (rs.next()) {
-                	   
-                	   Date date = rs.getDate(1);
+                	   DateTime dt = new DateTime(rs.getDate(1).getTime());
+                	   dt = dt.plusHours(12);
+                	   Date date = dt.toDate();
                 	   Double closingPrice = rs.getDouble(2);
                 	   
                 	   closingPrices.put(date.getTime(), closingPrice);
@@ -88,7 +91,9 @@ public class JDBCCompanyRepository {
          public Map<Long, CompanyData> extractData(ResultSet rs) throws SQLException {
       	   Map<Long, CompanyData> companyInfo = new TreeMap<Long, CompanyData>();
              while (rs.next()) {
-          	   Date date = new Date(rs.getDate("date").getTime());
+        	   DateTime dt = new DateTime(rs.getTimestamp("date").getTime());
+        	   dt = dt.plusHours(12);
+          	   Date date = new Date(dt.getMillis());
           	   String open = rs.getString("openPrice");
           	   String close = rs.getString("closingPrice");
           	   String high = rs.getString("high");
@@ -110,4 +115,13 @@ public class JDBCCompanyRepository {
      
 		return jdbcTemplate.query(GET_COMPANYDATA,  new Object[]{symbol}, extractor);
 	}
+	
+	public Date getlatestData(String symbol) {
+	    try{
+			return jdbcTemplate.queryForObject(GET_LATEST_DATE,new Object[]{symbol},  Date.class);
+	    } catch (DataAccessException e) {
+	    	return null;
+	    }
+    }
+	
 }

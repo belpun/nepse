@@ -11,4 +11,6 @@ public interface ICompanyRepository {
 	
 	public CompanyData getCompanyData(String symbol, Date date);
 
+	public Date getLatestDate(String symbol);
+
 }
