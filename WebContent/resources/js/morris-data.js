@@ -148,5 +148,71 @@ $(function() {
         	  });
           });
           
+          
+        	    $("#updateButton").click(function() {
+        	       console.log("update button");
+        	       loadSpinner();
+        	       updateCompany();
+        	    });
+        	    
+        	    
+        	    
+        	    function updateCompany(){
+        			var redirectUrl = 'http://localhost:8080/nepseData/web/company/' + companySymbol + '/update';
+				$.ajax({
+					type : "GET",
+					url : redirectUrl,
+					dataType : "json",
+					context : this,
+
+					success : function(response) {
+						if(response.successful) {
+							 location.reload();
+							 console.log("update succesfull");
+						}
+						
+						 console.log("update completed");
+					}
+				})};
+				
+				
+
+				// none, bounce, rotateplane, stretch, orbit, 
+				// roundBounce, win8, win8_linear or ios
+				var current_effect = 'bounce'; // 
+
+				function loadSpinner() {
+					run_waitMe(current_effect);
+				}
+				
+				function run_waitMe(effect){
+				$('html').waitMe({
+
+				//none, rotateplane, stretch, orbit, roundBounce, win8, 
+				//win8_linear, ios, facebook, rotation, timer, pulse, 
+				//progressBar, bouncePulse or img
+				effect: 'bounce',
+
+				//place text under the effect (string).
+				text: 'Please Wait',
+
+				//background for container (string).
+				bg: 'rgba(255,255,255,0.7)',
+
+				//color for background animation and text (string).
+				color: '#000',
+
+				//change width for elem animation (string).
+				sizeW: '',
+
+				//change height for elem animation (string).
+				sizeH: '',
+
+				// url to image
+				source: ''
+
+				});
+				}
+					
 });
                     

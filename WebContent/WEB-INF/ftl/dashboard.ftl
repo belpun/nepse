@@ -434,9 +434,9 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a id = "updateButton" href="#">
                             <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
+                                <span class="pull-left">Update</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                 <div class="clearfix"></div>
                             </div>
@@ -579,6 +579,10 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="/nepseData/resources//dist/js/sb-admin-2.js"></script>
+    
+    <!-- Loading Spinner-->
+    <script src="/nepseData/resources//js/waitMe.js"></script>
+    <link href="/nepseData/resources//dist/css/waitMe.css" rel="stylesheet">
 
 </body>
 
