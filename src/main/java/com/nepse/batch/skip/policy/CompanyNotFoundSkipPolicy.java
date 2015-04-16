@@ -6,6 +6,7 @@ import org.springframework.batch.core.step.skip.SkipLimitExceededException;
 import org.springframework.batch.core.step.skip.SkipPolicy;
 
 import com.nepse.exception.CompanyDataNotFound;
+import com.nepse.exception.CompanyDataUpdateException;
 
 public class CompanyNotFoundSkipPolicy implements SkipPolicy {
 	
@@ -36,7 +37,7 @@ public class CompanyNotFoundSkipPolicy implements SkipPolicy {
 
 		while (t != null) {
 
-			if (t instanceof CompanyDataNotFound) {
+			if (t instanceof CompanyDataNotFound || t instanceof CompanyDataUpdateException) {
 				return true;
 			}
 			

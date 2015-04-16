@@ -13,6 +13,6 @@
 	</batch:step>
   </batch:job>
   
-  <bean id="writeOpeningPriceToFileFromWebTasklet" class="com.nepse.loader.initilizer.WriteOpeningPriceToFileFromWebTasklet"/>
+  <bean id="writeOpeningPriceToFileFromWebTasklet" class="com.nepse.loader.tasklet.WriteOpeningPriceToFileFromWebTasklet"/>
  
 </beans>
