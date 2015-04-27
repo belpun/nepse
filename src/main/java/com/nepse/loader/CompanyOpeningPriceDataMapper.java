@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
@@ -15,8 +17,11 @@ import com.nepse.dao.ICompanyRepository;
 import com.nepse.dao.IGenericRepository;
 import com.nepse.domain.CompanyData;
 import com.nepse.exception.CompanyDataNotFound;
+import com.nepse.exception.CompanyDataUpdateException;
 
 public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData>{
+	
+	Logger logger = LoggerFactory.getLogger(CompanyOpeningPriceDataMapper.class);
 	
 	@Autowired
 	private ICompanyRepository companyRepository;
@@ -25,20 +30,36 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 	private IGenericRepository genericRepository;
 	
 	private MultiResourceItemReader reader;
+	
+	private String symbol;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Override
 	public CompanyData mapFieldSet(FieldSet fieldSet) throws BindException {
-		Resource currentResource = reader.getCurrentResource();
-		String filename = currentResource.getFilename();
-		String partFileName = filename.split("-")[1];
-		String companySymbol = partFileName.split("\\.")[0];
-		System.out.println(companySymbol);
+		String companySymbol = null;
 		
+		if (reader != null) {
+			Resource currentResource = reader.getCurrentResource();
+			String filename = currentResource.getFilename();
+			String partFileName = filename.split("-")[1];
+			companySymbol = partFileName.split("\\.")[0];
+			
+		} else {
+			companySymbol = symbol;
+		}
+		
+		if (reader == null && symbol == null) {
+			String errorMsg = "company Symbol is not provided so this file cannot be saved";
+			logger.error(errorMsg);
+			throw new IllegalStateException(errorMsg);
+		}
+		
+		logger.info("Reading the opening price file for {} ",companySymbol);
 		
 		String date = fieldSet.readString("Date");
 		
-		String closingPrice = fieldSet.readString("Open");
+		String openingPrice = fieldSet.readString("Open");
 		
 		Date closingPriceDate;
 		try {
@@ -46,15 +67,18 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 			CompanyData companyData = companyRepository.getCompanyData(companySymbol, closingPriceDate);
 			
 			if(companyData != null) {
-				companyData.setOpenPrice(closingPrice);
+				companyData.setOpenPrice(openingPrice);
 				return companyData;
 			} else {
-				throw new CompanyDataNotFound("Company Data not found for " + companySymbol + " for date " + closingPriceDate);
-			}
+				String error = "Company Data not found for " + companySymbol + " for date " + closingPriceDate;
+				logger.error(error);
+				throw new CompanyDataUpdateException(error);			
+				}
 		
 		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Cannot parse the company Data Date");
+			String error = "Cannot parse the company Data for company:" + companySymbol + ". Provided date : " + date + " and openingPrice : " + openingPrice ;
+			logger.error(error);
+			throw new CompanyDataNotFound(e);
 		}
 	}
 	
@@ -72,6 +96,22 @@ public class CompanyOpeningPriceDataMapper implements FieldSetMapper<CompanyData
 
 	public void setCompanyRepository(ICompanyRepository companyRepository) {
 		this.companyRepository = companyRepository;
+	}
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+	
+	public IGenericRepository getGenericRepository() {
+		return genericRepository;
+	}
+
+	public void setGenericRepository(IGenericRepository genericRepository) {
+		this.genericRepository = genericRepository;
 	}
 	
 }

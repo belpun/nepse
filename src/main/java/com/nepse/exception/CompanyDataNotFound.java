@@ -7,5 +7,9 @@ public class CompanyDataNotFound extends RuntimeException{
 	public CompanyDataNotFound(String msg){
 		super(msg);
 	}
+	
+	public CompanyDataNotFound(Throwable th) {
+		super(th);
+	}
 
 }

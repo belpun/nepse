@@ -81,5 +81,39 @@ public class CompanyRepository extends GenericRepository implements ICompanyRepo
 		}
 		return null;
 	}
+	
+	@Override
+	public Date getLatestDate(String symbol) {
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+
+//			session.save(entity);
+			
+			String hql = "select max(c.date) FROM CompanyData c where c.company.symbol = :symbol ";
+			Query query = session.createQuery(hql);
+			query.setParameter("symbol", symbol);
+			Date result = (Date) query.uniqueResult();
+
+			// Committing the change in the database.
+			return result;
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+
+			// Rolling back the changes to make the data consistent in case of
+			// any failure
+			// in between multiple database write operations.
+			tx.rollback();
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		return null;
+	}
 
 }

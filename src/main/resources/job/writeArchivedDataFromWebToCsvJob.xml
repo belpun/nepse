@@ -13,6 +13,6 @@
 	</batch:step>
   </batch:job>
   
-  <bean id="writeArchiveDataFromWebTasklet" class="com.nepse.loader.initilizer.WriteArchiveDataFromWebTasklet"/>
+  <bean id="writeArchiveDataFromWebTasklet" class="com.nepse.loader.tasklet.WriteArchiveDataFromWebTasklet"/>
  
 </beans>

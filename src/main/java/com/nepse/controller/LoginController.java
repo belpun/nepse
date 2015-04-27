@@ -1,5 +1,8 @@
 package com.nepse.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ import com.nepse.dao.JDBCCompanyRepository;
 
 @Controller
 public class LoginController {
+	
+	private DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 	
 	@Autowired
 	private JDBCCompanyRepository companyRepository;
@@ -34,6 +39,16 @@ public class LoginController {
 		 if(company != null) {
 			 model.addAttribute("companyInfoPresent", true);
 			 model.addAttribute("companySymbol", company);
+			 
+			 Date getlatestData = companyRepository.getlatestData(company);
+			 String latestDate = "";
+			 if(getlatestData != null) {
+				 
+				 synchronized (df) {
+					 latestDate = df.format(getlatestData);
+				}
+			 }
+			 model.addAttribute("latestDataDate", latestDate);
 			 
 		 }
 		 Map<String, String> companyMap = companyRepository.getCompanySymbol();

@@ -1,4 +1,4 @@
-package com.nepse.loader.initilizer;
+package com.nepse.loader.tasklet;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,6 +12,7 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nepse.data.NepseDataExtractorFromWeb;
 
@@ -20,11 +21,13 @@ public class WriteCompanyToCsvTasklet implements Tasklet{
 	private static final String fileName = "src/main/resources/companySymbol.csv";
 	private static final String HEADER = "name,symbol";
 	
+	@Autowired
+	private NepseDataExtractorFromWeb extractor;
+	
 	@Override
 	public RepeatStatus execute(StepContribution contribution,
 			ChunkContext chunkContext) throws Exception {
 		
-		NepseDataExtractorFromWeb extractor = new NepseDataExtractorFromWeb();
 		File file = new File(fileName);
 		
 		BufferedWriter bw = null;

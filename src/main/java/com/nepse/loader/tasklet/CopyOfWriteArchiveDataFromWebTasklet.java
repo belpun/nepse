@@ -1,4 +1,4 @@
-package com.nepse.loader.initilizer;
+package com.nepse.loader.tasklet;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -18,6 +18,7 @@ import com.nepse.data.NepseDataExtractorFromWeb;
 import com.nepse.domain.CompanyData;
 import com.nepse.writer.CsvWriter;
 
+@Deprecated
 public class CopyOfWriteArchiveDataFromWebTasklet implements Tasklet{
 	private final String FILE_LOCATION = "src" + File.separator + "main"
 			+ File.separator + "resources";

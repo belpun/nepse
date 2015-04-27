@@ -3,6 +3,7 @@ package com.nepse.controller;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,6 +111,11 @@ public class ChartController {
 		List<Object[]> prices = new ArrayList<Object[]>();
 		for (Entry<Long, CompanyData> keyTime : companyDatas.entrySet()) {
 			CompanyData companyData = companyDatas.get(keyTime.getKey());
+			
+			System.out.println(new Date(keyTime.getKey()) + " open:" + companyData.getOpenPrice()
+					+ " high:" + companyData.getHigh() + " low:" + companyData.getLow() + " close:" + 
+					companyData.getClosingPrice());
+			
 			String openPrice = companyData.getOpenPrice();
 			String high2 = companyData.getHigh();
 			String low2 = companyData.getLow();
