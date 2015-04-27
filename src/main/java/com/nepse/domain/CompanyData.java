@@ -243,5 +243,22 @@ public class CompanyData {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		if (company != null) {
+			sb.append(" companyName : " + getCompany().getName());
+			sb.append(" companySymbol : " + getCompany().getSymbol());
+		}
+		sb.append(" date: " + date);
+		sb.append(" openPrice: " + openPrice);
+		sb.append(" low: " + low);
+		sb.append(" high: " + high);
+		sb.append(" closingPrice: " + closingPrice);
+		
+		return sb.toString();
+	}
 
 }

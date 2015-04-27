@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,6 +17,8 @@ import com.nepse.exception.CompanyDataNotFound;
 
 
 public class CompanyDataWriter implements ItemWriter<CompanyDataForm> {
+	
+	private static Logger logger = Logger.getLogger(CompanyDataWriter.class);
 	
 	@Autowired
 	private final IGenericRepository genericRepository = null;
@@ -33,6 +37,7 @@ public class CompanyDataWriter implements ItemWriter<CompanyDataForm> {
 
 	@Override
 	public void write(List<? extends CompanyDataForm> items) throws Exception {
+	
 		for (CompanyDataForm entity : items) {
 			Company company = companyRepository.getCompanyBySymbol(entity.getCompanySymbol());
 			
@@ -48,8 +53,13 @@ public class CompanyDataWriter implements ItemWriter<CompanyDataForm> {
 			
 			if(company != null) {
 				companyData.setCompany(company);
-				genericRepository.save(companyData);
+				try{
+					genericRepository.save(companyData);
+				} catch (ConstraintViolationException e){
+					logger.info("Data already exist for : " + companyData);
+				}
 			} else {
+				logger.error("Tying to write data from file to db but Cannont find a company with symbol "+entity.getCompanySymbol()+" from repository");
 				throw new CompanyDataNotFound("Company data not found for : " + entity.getCompanySymbol());
 			}
 			
